@@ -197,6 +197,9 @@ class AnimalMovementAnalysis:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            pass
+            # get paths to the chosen files
+            birds_path = self.dlg.mQgsFileWidget1.filePath()
+            temperature_path = self.dlg.mQgsFileWidget2.filePath()
+            print(type(birds_path))
+            print(birds_path)
+
