@@ -55,4 +55,24 @@ def calculateDistancePoints(xa,ya,xb,yb):
     return distance
 
 #calculateCummulativeFDistancePerDay(data)
+
 #calculateSeasonFlight(data)
+def calculateSeasonFlight(date):
+    year,month,date=date.split('-')
+
+    seasons_month={
+        1:"Winter",
+        2:"Winter",
+        3:"Spring",
+        4:"Spring",
+        5:"Spring",
+        6:"Summer",
+        7:"Summer",
+        8:"Summer",
+        9:"Autumm",
+        10:"Autumm",
+        11:"Autumm",
+        12:"Winter",
+    }
+
+    return seasons_month.get(int(month), "Invalid month value")
