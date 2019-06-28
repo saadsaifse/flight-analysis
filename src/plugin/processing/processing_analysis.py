@@ -16,19 +16,42 @@ import os
 from qgis.core import *
 import qgis.utils
 
-#Create data object
-dataSample = qgis.utils.iface.activeLayer();
+# Name: constructObject()
+# Description: Create data object to arrange fields for processing from active shapefile
+# @return dictionary data
 
-features = dataSample.getFeatures()
+def constructObject():
+    data={}
 
-data={}
+    dataSample = qgis.utils.iface.activeLayer();
+    features = dataSample.getFeatures()
 
-for feature in features:
-    attributes = feature.attributes()
-    data[feature.id()]={}
+    for feature in features:
+        attributes = feature.attributes()
+        data[feature.id()]={}
 
-    for field, attr in zip(dataSample.fields(), attributes):
-        data[feature.id()][field.name()]=attr
+        for field, attr in zip(dataSample.fields(), attributes):
+            data[feature.id()][field.name()]=attr
+
+    return data
+
+# Name: calculateDistancePoints()
+# Description: Measure lineal distance between two points in WGS84 Ellipsoid
+# @return float distance
+
+def calculateDistancePoints(xa,ya,xb,yb):
+
+    distance=0
+
+    distanceF = QgsDistanceArea()
+    distanceF.setEllipsoid('WGS84')
+
+    point1=QgsPointXY(xa, ya)
+    point2=QgsPointXY(xb,yb)
+
+    distance=d.measureLine(point1, point2)
+
+    return distance
 
 #calculateCummulativeFDistancePerDay(data)
 #calculateSeasonFlight(data)
