@@ -37,7 +37,7 @@ def constructObject():
 
 # Name: calculateDistancePoints()
 # Description: Measure lineal distance between two points in WGS84 Ellipsoid
-# @return float distance
+# @return float distance in meters
 
 def calculateDistancePoints(xa,ya,xb,yb):
 
@@ -48,6 +48,7 @@ def calculateDistancePoints(xa,ya,xb,yb):
 
     point1=QgsPointXY(xa, ya)
     point2=QgsPointXY(xb,yb)
+
 
     distance=d.measureLine(point1, point2)
 
