@@ -35,12 +35,16 @@ def constructObject():
 
     return data
 
-# Name: calculateDistancePoints()
-# Description: Measure lineal distance between two points in WGS84 Ellipsoid
+# Name: calculateDistancePoints(xa,ya,xb,yb)
+# Description: Measure linear distance between two points in WGS84 Ellipsoid
+# @args:
+#       xa: longitute pointA
+#       ya: latitude pointA
+#       xb: longitute pointB
+#       yb: latitude pointB
 # @return float distance in meters
 
 def calculateDistancePoints(xa,ya,xb,yb):
-
     distance=0
 
     distanceF = QgsDistanceArea()
@@ -49,14 +53,17 @@ def calculateDistancePoints(xa,ya,xb,yb):
     point1=QgsPointXY(xa, ya)
     point2=QgsPointXY(xb,yb)
 
-
     distance=d.measureLine(point1, point2)
 
     return distance
 
 #calculateCummulativeFDistancePerDay(data)
 
-#calculateSeasonFlight(data)
+# Name: calculateSeasonFlight(date)
+# Description: calculate the season for a given date according to the month
+# @args:
+#       date: date in format YYYY-MM-DD
+# @return String season Winter, Spring, Summer, Autumn
 def calculateSeasonFlight(date):
     year,month,date=date.split('-')
 
@@ -69,9 +76,9 @@ def calculateSeasonFlight(date):
         6:"Summer",
         7:"Summer",
         8:"Summer",
-        9:"Autumm",
-        10:"Autumm",
-        11:"Autumm",
+        9:"Autumn",
+        10:"Autumn",
+        11:"Autumn",
         12:"Winter",
     }
 
