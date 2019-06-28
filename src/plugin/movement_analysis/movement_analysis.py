@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import QAction
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .movement_analysis_dialog import AnimalMovementAnalysisDialog
+from .movement_analysis_dialog import AnimalMovementAnalysisDialog, AnimalMovementAnalysisDialogFilter
 import os.path
 
 from qgis.core import (
@@ -195,21 +195,28 @@ class AnimalMovementAnalysis:
         if self.first_start == True:
             self.first_start = False
             self.dlg1 = AnimalMovementAnalysisDialog()
+            self.dlg2 = AnimalMovementAnalysisDialogFilter()
 
         # show the dialog
-        self.dlg.show()
+        self.dlg1.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg1.exec_()
         # See if OK was pressed
         if result:
             # get paths to the chosen files
-            birds_path = self.dlg.mQgsFileWidget1.filePath()
-            temperature_path = self.dlg.mQgsFileWidget2.filePath()
+            birds_path = self.dlg1.mQgsFileWidget1.filePath()
+            temperature_path = self.dlg1.mQgsFileWidget2.filePath()
 
             if birds_path.endswith('.shp'):
                 birds_layer = self.iface.addVectorLayer(birds_path, "birds layer", "ogr")
                 if not birds_layer:
                     self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
+
+                # show the next dialog
+                self.dlg2.show()
+                # Run the dialog event loop
+                result = self.dlg2.exec_()    
+            
             else:
                 self.iface.messageBar().pushMessage("Error", "Please upload a valid shapefile", level=Qgis.Critical)
             # maybe it should indeed be stored locally
