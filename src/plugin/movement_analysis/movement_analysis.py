@@ -31,6 +31,11 @@ from .resources import *
 from .movement_analysis_dialog import AnimalMovementAnalysisDialog
 import os.path
 
+from qgis.core import (
+Qgis, QgsVectorLayer, QgsRasterLayer,
+QgsColorRampShader,
+QgsSingleBandPseudoColorRenderer
+)
 
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
@@ -189,7 +194,7 @@ class AnimalMovementAnalysis:
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
             self.first_start = False
-            self.dlg = AnimalMovementAnalysisDialog()
+            self.dlg1 = AnimalMovementAnalysisDialog()
 
         # show the dialog
         self.dlg.show()
@@ -200,6 +205,19 @@ class AnimalMovementAnalysis:
             # get paths to the chosen files
             birds_path = self.dlg.mQgsFileWidget1.filePath()
             temperature_path = self.dlg.mQgsFileWidget2.filePath()
-            print(type(birds_path))
-            print(birds_path)
+
+            if birds_path.endswith('.shp'):
+                birds_layer = self.iface.addVectorLayer(birds_path, "birds layer", "ogr")
+                if not birds_layer:
+                    self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
+            else:
+                self.iface.messageBar().pushMessage("Error", "Please upload a valid shapefile", level=Qgis.Critical)
+            # maybe it should indeed be stored locally
+            # if temperature_path.endswith('.tif'):
+            #     temp_layer = self.iface.addRasterLayer(temperature_path, "temperature layer")
+            #     if not temp_layer:
+            #         self.iface.messageBar().pushMessage("Error", "Unfortunately the raster could not be loaded. Please try again with a valid file", level=Qgis.Critical)
+            # else:
+            #     self.iface.messageBar().pushMessage("Error", "Please upload a valid TIFF", level=Qgis.Critical)
+
 
