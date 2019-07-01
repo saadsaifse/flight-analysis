@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 
@@ -34,8 +34,10 @@ import os.path
 from qgis.core import (
 Qgis, QgsVectorLayer, QgsRasterLayer,
 QgsColorRampShader,
-QgsSingleBandPseudoColorRenderer
+QgsSingleBandPseudoColorRenderer,
+QgsVectorDataProvider, QgsField
 )
+from datetime import datetime as dt
 
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
@@ -205,26 +207,82 @@ class AnimalMovementAnalysis:
         if result:
             # get paths to the chosen files
             birds_path = self.dlg1.mQgsFileWidget1.filePath()
-            temperature_path = self.dlg1.mQgsFileWidget2.filePath()
-
-            if birds_path.endswith('.shp'):
-                birds_layer = self.iface.addVectorLayer(birds_path, "birds layer", "ogr")
-                if not birds_layer:
-                    self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
-
-                # show the next dialog
-                self.dlg2.show()
-                # Run the dialog event loop
-                result = self.dlg2.exec_()    
+            # check if it's a Shapefile
+            if not birds_path.endswith('.shp'):
+                self.iface.messageBar().pushMessage("Error", "Please upload a valid shapefile", level=Qgis.Critical)
             
             else:
-                self.iface.messageBar().pushMessage("Error", "Please upload a valid shapefile", level=Qgis.Critical)
-            # maybe it should indeed be stored locally
-            # if temperature_path.endswith('.tif'):
-            #     temp_layer = self.iface.addRasterLayer(temperature_path, "temperature layer")
-            #     if not temp_layer:
-            #         self.iface.messageBar().pushMessage("Error", "Unfortunately the raster could not be loaded. Please try again with a valid file", level=Qgis.Critical)
-            # else:
-            #     self.iface.messageBar().pushMessage("Error", "Please upload a valid TIFF", level=Qgis.Critical)
+                # load the layer
+                birds_layer = QgsVectorLayer(birds_path, "birds layer", "ogr")
+                
+                
+
+                # check if it's a valid Shapefile
+                if not birds_layer.isValid():
+                    self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
+
+                else:
+                    caps = birds_layer.dataProvider().capabilities()
+                    if caps & QgsVectorDataProvider.AddAttributes:
+                        res = birds_layer.dataProvider().addAttributes(
+                            [QgsField("timedt",  QVariant.DateTime)])
+
+                    birds_layer.updateFields()
+
+                    # for field in birds_layer.fields():
+                    #     print(field.name(), field.typeName())
+
+                    features = birds_layer.getFeatures()
+                    ind_idents = {feature["ind_ident"] for feature in features}
+                    list_idents = list(ind_idents)
+                    list_idents.insert(0, "All")
+
+                    dates = []
+                    for i, feature in enumerate(birds_layer.getFeatures()):
+                        test = dt.strptime(feature["timestamp"], '%Y-%m-%d %H:%M:%S')
+                        feature["timedt"] = test
+                        dates.append(feature["timedt"])
+
+                    shape_layer.dataProvider().changeAttributeValues(updates)
+
+                    print(len(dates))
+
+                    min_date = min(dates)
+                    max_date = max(dates)
+                    print(min_date)
+                    print(max_date)
+
+                    # show the next dialog
+                    self.dlg2.show()
+                    self.dlg2.comboBox.addItems(list_idents)
+                    self.dlg2.comboBox.setCurrentIndex(0)
+                    self.dlg2.mDateTimeEdit_From.setDateTime(min_date)
+                    self.dlg2.mDateTimeEdit_To.setDateTime(max_date)
+ 
+                    # Run the dialog event loop
+                    result2 = self.dlg2.exec_()                
+
+                    if result2:
+                        range_from = self.dlg2.mDateTimeEdit_From.dateTime()
+                        range_to = self.dlg2.mDateTimeEdit_To.dateTime()
+                        selected_bird_index = self.dlg2.comboBox.currentIndex()
+
+                        if (selected_bird_index == 0):
+                            selected_birds = list_idents[1:]
+                        else:
+                            selected_birds = [list_idents[selected_bird_index]]
+                        
+                        print(range_from, range_to, selected_birds)
+
+                        selected_features = []
+                        for f in birds_layer.getFeatures():
+                            print(type(f["timedt"]))
+                            print(f["timedt"])
+                            print(type(min_date))
+                            print(min_date)
+                            if (f["timedt"] > min_date & f["timedt"] < max_date & f["ind_ident"] in selected_birds):
+                                selected_features.append(f)
+
+                        print(len(selected_features))
 
 

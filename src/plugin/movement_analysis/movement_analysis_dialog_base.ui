@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>255</height>
+    <height>215</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>190</y>
+     <x>40</x>
+     <y>140</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>40</y>
      <width>151</width>
      <height>21</height>
     </rect>
@@ -42,34 +42,11 @@
     <string>Select input shapefile</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>110</y>
-     <width>151</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Select temperature CSV</string>
-   </property>
-  </widget>
   <widget class="QgsFileWidget" name="mQgsFileWidget1">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>60</y>
-     <width>331</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QgsFileWidget" name="mQgsFileWidget2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>150</y>
+     <y>80</y>
      <width>331</width>
      <height>27</height>
     </rect>
