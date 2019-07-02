@@ -16,11 +16,11 @@ import os
 from qgis.core import *
 import qgis.utils
 
-# Name: constructObject()
+# Name: constructDataObject()
 # Description: Create data object to arrange fields for processing from active shapefile
 # @return dictionary data
 
-def constructObject():
+def constructDataObject():
     data={}
 
     dataSample = qgis.utils.iface.activeLayer();
@@ -34,6 +34,25 @@ def constructObject():
             data[feature.id()][field.name()]=attr
 
     return data
+
+#Filtering function ()
+
+# Name: filterData()
+# Description: Create data object subset by user filters
+# @return dictionary data filtered
+
+def filterData(data, date_init, date_end, birds_filter=None):
+    data_filtered={}
+
+    if birds_filter is None:
+        #get_dates_filtered
+        data_filtered="something"
+    else:
+        data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["ind_ident"]==birds_filter}
+
+    return data_filtered
+
+
 
 # Name: calculateDistancePoints(xa,ya,xb,yb)
 # Description: Measure linear distance between two points in WGS84 Ellipsoid
@@ -83,3 +102,27 @@ def calculateSeasonFlight(date):
     }
 
     return seasons_month.get(int(month), "Invalid month value")
+
+# Name: calculateDistancePerDay(data)
+# Description: calculate the total distance
+# @args:
+#       date: date in format YYYY-MM-DD
+# @return String season Winter, Spring, Summer, Autumn
+
+
+
+
+
+
+
+#Functionality implementation example:
+date_init="2011-05-01"
+date_end="2011-05-31"
+bird="Eagle Owl eobs 1750 / DEW A0322"
+data=constructDataObject()
+filteredData_bird=filterData(data,date_init,date_end,bird)
+filteredData_all=filterData(data,date_init,date_end)
+
+#print (data[1049])
+print(filteredData_bird)
+print(filteredData_all)
