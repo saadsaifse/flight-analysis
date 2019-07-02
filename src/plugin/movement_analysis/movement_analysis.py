@@ -215,74 +215,84 @@ class AnimalMovementAnalysis:
                 # load the layer
                 birds_layer = QgsVectorLayer(birds_path, "birds layer", "ogr")
                 
-                
-
                 # check if it's a valid Shapefile
                 if not birds_layer.isValid():
                     self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
 
                 else:
-                    caps = birds_layer.dataProvider().capabilities()
-                    if caps & QgsVectorDataProvider.AddAttributes:
-                        res = birds_layer.dataProvider().addAttributes(
-                            [QgsField("timedt",  QVariant.DateTime)])
+                    # caps = birds_layer.dataProvider().capabilities()
+                    # if caps & QgsVectorDataProvider.AddAttributes:
+                    #     res = birds_layer.dataProvider().addAttributes(
+                    #         [QgsField("timedt",  QVariant.DateTime)])
 
-                    birds_layer.updateFields()
+                    # birds_layer.updateFields()
 
                     # for field in birds_layer.fields():
                     #     print(field.name(), field.typeName())
 
                     features = birds_layer.getFeatures()
-                    ind_idents = {feature["ind_ident"] for feature in features}
-                    list_idents = list(ind_idents)
-                    list_idents.insert(0, "All")
+                    # ind_idents = {feature["ind_ident"] for feature in features}
+                    # list_idents = list(ind_idents)
+                    # list_idents.insert(0, "All")
 
-                    dates = []
-                    for i, feature in enumerate(birds_layer.getFeatures()):
-                        test = dt.strptime(feature["timestamp"], '%Y-%m-%d %H:%M:%S')
-                        feature["timedt"] = test
-                        dates.append(feature["timedt"])
+                    # dates = []
+                    # for i, feature in enumerate(birds_layer.getFeatures()):
+                    #     test = dt.strptime(feature["timestamp"], '%Y-%m-%d %H:%M:%S')
+                    #     feature["timedt"] = test
+                    #     dates.append(feature["timedt"])
 
-                    shape_layer.dataProvider().changeAttributeValues(updates)
+                    # shape_layer.dataProvider().changeAttributeValues(updates)
 
-                    print(len(dates))
+                    # print(len(dates))
 
-                    min_date = min(dates)
-                    max_date = max(dates)
-                    print(min_date)
-                    print(max_date)
+                    # min_date = min(dates)
+                    # max_date = max(dates)
+                    # print(min_date)
+                    # print(max_date)
 
                     # show the next dialog
                     self.dlg2.show()
-                    self.dlg2.comboBox.addItems(list_idents)
-                    self.dlg2.comboBox.setCurrentIndex(0)
-                    self.dlg2.mDateTimeEdit_From.setDateTime(min_date)
-                    self.dlg2.mDateTimeEdit_To.setDateTime(max_date)
+                    # self.dlg2.comboBox.addItems(list_idents)
+                    # self.dlg2.comboBox.setCurrentIndex(0)
+                    # self.dlg2.mDateTimeEdit_From.setDateTime(min_date)
+                    # self.dlg2.mDateTimeEdit_To.setDateTime(max_date)
+                    def updateLine(text):
+                        self.dlg2.lineEdit.setText(text)
+
+                    self.dlg2.calculateButton.clicked.connect(lambda: updateLine('uh'))  
  
                     # Run the dialog event loop
-                    result2 = self.dlg2.exec_()                
+                    result2 = self.dlg2.exec_() 
 
                     if result2:
-                        range_from = self.dlg2.mDateTimeEdit_From.dateTime()
-                        range_to = self.dlg2.mDateTimeEdit_To.dateTime()
-                        selected_bird_index = self.dlg2.comboBox.currentIndex()
+                        print("something")
+                        # range_from = self.dlg2.mDateTimeEdit_From.dateTime()
+                        # range_to = self.dlg2.mDateTimeEdit_To.dateTime()
+                        # selected_bird_index = self.dlg2.comboBox.currentIndex()
 
-                        if (selected_bird_index == 0):
-                            selected_birds = list_idents[1:]
-                        else:
-                            selected_birds = [list_idents[selected_bird_index]]
+                        # if (selected_bird_index == 0):
+                        #     selected_birds = list_idents[1:]
+                        # else:
+                        #     selected_birds = [list_idents[selected_bird_index]]
                         
-                        print(range_from, range_to, selected_birds)
+                        # print(range_from, range_to, selected_birds)
 
-                        selected_features = []
-                        for f in birds_layer.getFeatures():
-                            print(type(f["timedt"]))
-                            print(f["timedt"])
-                            print(type(min_date))
-                            print(min_date)
-                            if (f["timedt"] > min_date & f["timedt"] < max_date & f["ind_ident"] in selected_birds):
-                                selected_features.append(f)
+                        # selected_features = []
+                        # for f in birds_layer.getFeatures():
+                        #     print(type(f["timedt"]))
+                        #     print(f["timedt"])
+                        #     print(type(min_date))
+                        #     print(min_date)
+                        #     if (f["timedt"] > min_date & f["timedt"] < max_date & f["ind_ident"] in selected_birds):
+                        #         selected_features.append(f)
 
-                        print(len(selected_features))
+                        # print(len(selected_features))
+                        # def run1(self):
+                        #     print("Hmmmmm2")
+                        #     self.dlg2.lineEdit.setText("Helloooo2")
+                        # self.dlg2.calculateButton.clicked.connect(self.run1)
 
+
+    def updateLineTest(self, text):
+        self.dlg2.lineEdit.setText(text)
 

@@ -81,7 +81,7 @@
     <string>Birds to analyse</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="calculateButton">
    <property name="geometry">
     <rect>
      <x>450</x>
