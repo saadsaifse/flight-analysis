@@ -21,6 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+import sys
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
@@ -29,15 +31,23 @@ from PyQt5.QtWidgets import QAction
 from .resources import *
 # Import the code for the dialog
 from .movement_analysis_dialog import AnimalMovementAnalysisDialog, AnimalMovementAnalysisDialogFilter
-import os.path
+# import os.path
 
-from qgis.core import (
+from qgis.core import ( QgsProject,
 Qgis, QgsVectorLayer, QgsRasterLayer,
 QgsColorRampShader,
 QgsSingleBandPseudoColorRenderer,
-QgsVectorDataProvider, QgsField
+QgsVectorDataProvider, QgsField,
 )
 from datetime import datetime as dt
+
+# from qgis.core import *
+import qgis.utils
+import os
+
+# import local processing files
+sys.path.insert(0, './preprocessing')
+from .preprocessing import preprocessing
 
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
@@ -220,6 +230,10 @@ class AnimalMovementAnalysis:
                     self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
 
                 else:
+                    preprocessing.preprocessing(birds_layer, r"F:\Dokumente\Uni_Msc\2019_SS\PIGIS\project\birds-repo\src\plugin\movement_analysis\preprocessing\data\temperature.csv?delimiter={}&xField={}&yField={}")
+                    print("I maybe preprocessed")
+                    QgsProject.instance().addMapLayer(birds_layer)
+                    # self.iface.addVectorLayer(birds_layer, "BirdsLayer", "ogr")
                     # caps = birds_layer.dataProvider().capabilities()
                     # if caps & QgsVectorDataProvider.AddAttributes:
                     #     res = birds_layer.dataProvider().addAttributes(
