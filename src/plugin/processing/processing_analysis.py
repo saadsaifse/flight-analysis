@@ -37,21 +37,36 @@ def constructDataObject():
 
 #Filtering function ()
 
-# Name: filterData()
-# Description: Create data object subset by user filters
-# @return dictionary data filtered
+# Name: filterDataByBird()
+# Description: Create data object subset by one bird selected by user
+# @return dictionary data filtered per bird selected
 
-def filterData(data, date_init, date_end, birds_filter=None):
+def filterDataByBird(data,birds_filter=None):
     data_filtered={}
 
     if birds_filter is None:
-        #get_dates_filtered
-        data_filtered="something"
+        data_filtered=data
     else:
         data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["ind_ident"]==birds_filter}
 
     return data_filtered
 
+# Name: filterDataByDate()
+# Description: Create data object subset by user filters date range init and end
+# @return dictionary data filtered between two given dates
+
+def filterDataByDate(data, date_init=None, date_end=None):
+    data_filtered={}
+
+    if date_init is None or date_end is None:
+        data_filtered=data
+    else:
+        date_init=datetime.strptime(date_init, '%Y-%m-%d')
+        date_end=datetime.strptime(date_end, '%Y-%m-%d')
+
+        data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["date"]>=date_init and data[outer_k]["date"]<=date_end}
+
+    return data_filtered
 
 
 # Name: calculateDistancePoints(xa,ya,xb,yb)
@@ -116,13 +131,15 @@ def calculateSeasonFlight(date):
 
 
 #Functionality implementation example:
-date_init="2011-05-01"
-date_end="2011-05-31"
+date_init="2014-05-01"
+date_end="2014-05-31"
 bird="Eagle Owl eobs 1750 / DEW A0322"
 data=constructDataObject()
-filteredData_bird=filterData(data,date_init,date_end,bird)
-filteredData_all=filterData(data,date_init,date_end)
+filteredData_bird=filterDataByBird(data,bird)
+filteredData_all=filterDataByDate(data,date_init,date_end)
 
 #print (data[1049])
+print("Filtered by bird\n")
 print(filteredData_bird)
+print("Filtered by dates\n")
 print(filteredData_all)
