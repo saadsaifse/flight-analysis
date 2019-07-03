@@ -7,8 +7,8 @@ import time
 from datetime import datetime as dt
 
 def preprocessing (shape_layer, csv):
-    uri2 = "file:///F:/Dokumente/Uni_Msc/2019_SS/PIGIS/project/birds-repo/src/plugin/movement_analysis/preprocessing/data/temperature2.csv?delimiter=,"
-    
+    uri2 = "file:///F:/Dokumente/Uni_Msc/2019_SS/PIGIS/project/birds-repo/src/plugin/movement_analysis/preprocessing/data/temperature.csv?delimiter=,"
+
     start = dt.now()
     print("Script execution started at: ", start)
 
