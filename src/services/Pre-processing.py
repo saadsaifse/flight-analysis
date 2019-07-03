@@ -8,11 +8,11 @@ def preprocessing (shape_layer, csv):
     caps = shape_layer.dataProvider().capabilities()
     if caps & QgsVectorDataProvider.AddAttributes:
         res = shape_layer.dataProvider().addAttributes(
-            [QgsField("date", QVariant.String), QgsField("time", QVariant.String)])
+            [QgsField("date", QVariant.DateTime), QgsField("time_str", QVariant.String)])
 
     shape_layer.updateFields()
 
-    field_name_i_search = ['date', 'time']
+    field_name_i_search = ['date', 'time_str']
     fields = shape_layer.dataProvider().fields()
     indexlist = []
     index = 0
@@ -25,9 +25,13 @@ def preprocessing (shape_layer, csv):
     updates = {}
     for feat in shape_layer.getFeatures():
         # split date and time values from timestamp field
-        date, time = feat['timestamp'].split(" ")
+        date_str, time_str = feat['timestamp'].split(" ")
+
+        #convert date format from string to date
+        date=datetime.datetime.strptime(date_str, '%Y-%m-%d' ).date()
+
         # Update the empty field in the shapefile
-        updates[feat.id()] = {indexlist[0]: date, indexlist[1]: time}
+        updates[feat.id()] = {indexlist[0]: date, indexlist[1]: time_str}
     shape_layer.dataProvider().changeAttributeValues(updates)
 
     shape_layer.updateFields()
