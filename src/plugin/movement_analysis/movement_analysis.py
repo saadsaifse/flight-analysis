@@ -245,31 +245,31 @@ class AnimalMovementAnalysis:
                     #     print(field.name(), field.typeName())
 
                     features = birds_layer.getFeatures()
-                    # ind_idents = {feature["ind_ident"] for feature in features}
-                    # list_idents = list(ind_idents)
-                    # list_idents.insert(0, "All")
+                    ind_idents = {feature["ind_ident"] for feature in features}
+                    list_idents = list(ind_idents)
+                    list_idents.insert(0, "All")
 
-                    # dates = []
-                    # for i, feature in enumerate(birds_layer.getFeatures()):
-                    #     test = dt.strptime(feature["timestamp"], '%Y-%m-%d %H:%M:%S')
-                    #     feature["timedt"] = test
-                    #     dates.append(feature["timedt"])
+                    dates = []
+                    for i, feature in enumerate(birds_layer.getFeatures()):
+                        test = dt.strptime(feature["timestamp"], '%Y-%m-%d %H:%M:%S')
+                        # feature["timedt"] = test
+                        dates.append(test)
 
                     # shape_layer.dataProvider().changeAttributeValues(updates)
 
                     # print(len(dates))
 
-                    # min_date = min(dates)
-                    # max_date = max(dates)
-                    # print(min_date)
-                    # print(max_date)
+                    min_date = min(dates)
+                    max_date = max(dates)
+                    print(min_date)
+                    print(max_date)
 
                     # show the next dialog
                     self.dlg2.show()
-                    # self.dlg2.comboBox.addItems(list_idents)
-                    # self.dlg2.comboBox.setCurrentIndex(0)
-                    # self.dlg2.mDateTimeEdit_From.setDateTime(min_date)
-                    # self.dlg2.mDateTimeEdit_To.setDateTime(max_date)
+                    self.dlg2.comboBox.addItems(list_idents)
+                    self.dlg2.comboBox.setCurrentIndex(0)
+                    self.dlg2.mDateTimeEdit_From.setDateTime(min_date)
+                    self.dlg2.mDateTimeEdit_To.setDateTime(max_date)
                     def updateLine(text):
                         self.dlg2.lineEdit.setText(text)
 
@@ -280,16 +280,16 @@ class AnimalMovementAnalysis:
 
                     if result2:
                         print("something")
-                        # range_from = self.dlg2.mDateTimeEdit_From.dateTime()
-                        # range_to = self.dlg2.mDateTimeEdit_To.dateTime()
-                        # selected_bird_index = self.dlg2.comboBox.currentIndex()
+                        range_from = self.dlg2.mDateTimeEdit_From.dateTime()
+                        range_to = self.dlg2.mDateTimeEdit_To.dateTime()
+                        selected_bird_index = self.dlg2.comboBox.currentIndex()
 
-                        # if (selected_bird_index == 0):
-                        #     selected_birds = list_idents[1:]
-                        # else:
-                        #     selected_birds = [list_idents[selected_bird_index]]
-                        
-                        # print(range_from, range_to, selected_birds)
+                        if (selected_bird_index == 0):
+                            selected_birds = list_idents[1:]
+                        else:
+                            selected_birds = [list_idents[selected_bird_index]]
+                        print(type(range_from))
+                        print(range_from, range_to, selected_birds)
 
                         # selected_features = []
                         # for f in birds_layer.getFeatures():

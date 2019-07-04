@@ -1,9 +1,10 @@
 # from qgis.core import QgsVectorDataProvider
 from qgis.core import *
-from PyQt5.QtCore import * 
+from PyQt5.QtCore import *
 import qgis.utils
 import os
 import time
+import dateutil.parser
 from datetime import datetime as dt
 
 def preprocessing (shape_layer, csv):
@@ -15,7 +16,7 @@ def preprocessing (shape_layer, csv):
     # first remove the unnecessary attributes
     caps = shape_layer.dataProvider().capabilities()
     indices = []
-    useless_fields = ("start_time", "utm_east", "utm_north", "utm_zone", "battery_vo", "fix_batter", "horizontal", "key_bin_ch", "speed_accu", "status", "temperatur", "type_of_fi", "used_time_", "heading", "outlier_ma", "visible", "sensor_typ","individual", "tag_ident", "study_name", "date", "time")
+    useless_fields = ("start_time", "utm_east", "utm_north", "utm_zone", "battery_vo", "fix_batter", "horizontal", "key_bin_ch", "speed_accu", "status", "temperatur", "type_of_fi", "used_time_", "heading", "outlier_ma", "visible", "sensor_typ","individual", "tag_ident", "speed", "height", "study_name", "date", "time")
     for field in shape_layer.fields():
         for value in useless_fields:
             index = shape_layer.fields().lookupField(value)
@@ -35,7 +36,8 @@ def preprocessing (shape_layer, csv):
     caps = shape_layer.dataProvider().capabilities()
     if caps & QgsVectorDataProvider.AddAttributes:
         res = shape_layer.dataProvider().addAttributes(
-            [QgsField("dateDate", QVariant.DateTime), QgsField("dateString", QVariant.String)])
+            [QgsField("date", QVariant.Date), QgsField("dateString", QVariant.String), QgsField("timeString", QVariant.String)])
+
 
     # update to propagate the changes
     shape_layer.updateFields()
@@ -45,7 +47,7 @@ def preprocessing (shape_layer, csv):
     print("Script creating new attributes ran for : ", total_time)
 
     # populate the attributes with values
-    field_name_i_search = ['dateDate','dateString']
+    field_name_i_search = ['date', 'dateString', 'timeString']
     fields = shape_layer.dataProvider().fields()
     indexlist = []
     index = 0
@@ -59,22 +61,30 @@ def preprocessing (shape_layer, csv):
     updates = {}
     for feat in shape_layer.getFeatures():
         # split date and time values from timestamp field
-        # date, time = feat['timestamp'].split(" ")
-        dateD = dt.strptime(feat["timestamp"], '%Y-%m-%d %H:%M:%S')
+        date, time = feat['timestamp'].split(" ")
+        dateD = dt.strptime(date,'%Y-%m-%d')
+        # print(dateD)
         dateS = "{:%d-%B-%Y}".format(dateD)
-        test = QDateTime(dateD)
-        dateQ = QDateTime.date(test)
+        # dateFull = "{:%m/%d/%y %H:%M:%S}".format(dateD)
+        # test = QDateTime(dateD)
+        # dateQ = QDateTime.fromString(feat['timestamp'])
+        # print(dateQ)
         # Update the empty field in the shapefile
-        updates[feat.id()] = {indexlist[1]: dateS, indexlist[0]: dateQ}
+        # now = QDateTime.currentDateTime()
+        # print(now)
+        # v = QVariant(QDateTime(now))
+        # print(v)
+        # test = dt.strptime(now.toString(Qt.ISODate), "%Y-%m-%dT%H:%M:%S")
+        updates[feat.id()] = {indexlist[0]: QVariant(QDateTime(dateD)), indexlist[1]: dateS, indexlist[2]: time}
 
-    enddd = dt.now()
-    total_time = enddd - end2
+    end3 = dt.now()
+    total_time = end3 - end2
     print("Script now ready to update values ", total_time)
 
     shape_layer.dataProvider().changeAttributeValues(updates)
 
-    end3 = dt.now()
-    total_time = end3 - end2
+    end4 = dt.now()
+    total_time = end4 - end3
     print("Script new fields populating ran for : ", total_time)
 
     vectorLyr = shape_layer
@@ -102,8 +112,8 @@ def preprocessing (shape_layer, csv):
         res = vectorLyr.dataProvider().addAttributes([QgsField("avg_temp", QVariant.Double)])
     vectorLyr.updateFields()
 
-    end4 = dt.now()
-    total_time = end4 - end3
+    end5 = dt.now()
+    total_time = end5 - end4
     print("Script joining ran for : ", total_time)
 
     with edit(vectorLyr):
