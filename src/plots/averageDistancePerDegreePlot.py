@@ -6,28 +6,46 @@ print(modelsPath)
 sys.path.append(modelsPath)
 
 import pylab as plt
-import numpy as np
 from averageDistancePerDegree import AverageDistancePerDegree
 
-def plot():
-    model = AverageDistancePerDegree()
-    data = model.getDummyData()
+def plot(birdId, temperatures, averageDistances):
+    """Plots average distances against temperatures
 
-    tempratures = []
-    distances = []
-    for i in data:
-        tempratures.append(i.temp)
-        distances.append(i.avgDistance)
+    Parameters:
+        birdId (str): The ID of the bird
+        temperatures (list): List of temperature values
+        averageDistances (list): List of average distances
+    """    
 
     plt.style.use('ggplot')
     fig = plt.figure(1)
     ax = plt.gca()
-    ax.bar(tempratures, distances , lw = 2)
+    ax.bar(temperatures, averageDistances , lw = 1)
     # set the axis labels
-    ax.set_xlabel(r'$temp$', fontsize=14, labelpad=10)
-    ax.set_ylabel(r'$avg. distance$', fontsize=14, labelpad=25, rotation=0)
+    ax.set_xlabel(r'$temperature$', fontsize=14, labelpad=10)
+    ax.set_ylabel(r'$avg. distance$', fontsize=14, labelpad=10, rotation=90)
+
+    # Customize the plot
+    ax.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
+    ax.tick_params(labelsize=12, length=0)
+    # add a legend
+    leg = plt.legend( [birdId], loc=1 )
+    fr = leg.get_frame()
+    fr.set_facecolor('w')
+    fr.set_alpha(.7)
+
+    plt.title('Average distances')
     plt.show()
 
 if __name__ == "__main__":
-    plot()
+    model = AverageDistancePerDegree()
+    data = model.getDummyData()
+
+    temperatures = []
+    distances = []
+    for i in data:
+        temperatures.append(i.temp)
+        distances.append(i.avgDistance)
+
+    plot(data[0].birdId, temperatures, distances)
 
