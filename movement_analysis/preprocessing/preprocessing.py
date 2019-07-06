@@ -9,7 +9,9 @@ from datetime import datetime as dt
 
 
 def preprocessing(shape_layer):
-    uri2 = "file:///F:/Dokumente/Uni_Msc/2019_SS/PIGIS/project/birds-repo/movement_analysis/preprocessing/data/temperature.csv?delimiter=,"
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    print("Current preprocessing directory: " + current_dir)
+    uri2 = "file:///" + current_dir + "/data/temperature.csv?delimiter=,"
 
     start = dt.now()
     print("Script execution started at: ", start)
