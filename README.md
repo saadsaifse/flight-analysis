@@ -11,6 +11,10 @@ Below fields should be there in the shape file
 6. temperature
 7. band
 
+# Installation
+
+Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it.
+
 # Decided Functions
 
 > calculateCummulativeSpeedPerDay(data)
