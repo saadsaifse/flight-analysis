@@ -104,16 +104,6 @@ def calculateDistancePoints(xa,ya,xb,yb):
 
     return distance
 
-#calculateCummulativeFDistancePerDay(data)
-def calculateDistancePerDay(data):
-
-    grouped = collections.defaultdict(list)
-
-    for outer_k in data:
-        grouped[data[outer_k]["ind_ident"]].append(data[outer_k])
-
-    return grouped
-
 # Name: calculateSeasonFlight(date)
 # Description: calculate the season for a given date according to the month
 # @args:
