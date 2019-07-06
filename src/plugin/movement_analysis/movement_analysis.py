@@ -219,7 +219,7 @@ class AnimalMovementAnalysis:
             birds_path = self.dlg1.mQgsFileWidget1.filePath()
             # check if it's a Shapefile
             if not birds_path.endswith('.shp'):
-                self.iface.messageBar().pushMessage("Error", "Please upload a valid shapefile", level=Qgis.Critical)
+                self.iface.messageBar().pushMessage("Error", "Please upload shapefile", level=Qgis.Critical)
             
             else:
                 # load the layer
@@ -230,46 +230,21 @@ class AnimalMovementAnalysis:
                     self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
 
                 else:
-                    preprocessing.preprocessing(birds_layer, r"F:\Dokumente\Uni_Msc\2019_SS\PIGIS\project\birds-repo\src\plugin\movement_analysis\preprocessing\data\temperature.csv?delimiter={}&xField={}&yField={}")
+                    preprocessing.preprocessing(birds_layer)
                     print("I maybe preprocessed")
                     QgsProject.instance().addMapLayer(birds_layer)
-                    # self.iface.addVectorLayer(birds_layer, "BirdsLayer", "ogr")
-                    # caps = birds_layer.dataProvider().capabilities()
-                    # if caps & QgsVectorDataProvider.AddAttributes:
-                    #     res = birds_layer.dataProvider().addAttributes(
-                    #         [QgsField("timedt",  QVariant.DateTime)])
 
-                    # birds_layer.updateFields()
-
-                    # for field in birds_layer.fields():
-                    #     print(field.name(), field.typeName())
-
+                    # find out whether all birds or just 1 have to be analysed
                     features = birds_layer.getFeatures()
                     ind_idents = {feature["ind_ident"] for feature in features}
                     list_idents = list(ind_idents)
                     list_idents.insert(0, "All")
 
-                    dates = []
-                    for i, feature in enumerate(birds_layer.getFeatures()):
-                        test = dt.strptime(feature["timestamp"], '%Y-%m-%d %H:%M:%S')
-                        # feature["timedt"] = test
-                        dates.append(test)
-
-                    # shape_layer.dataProvider().changeAttributeValues(updates)
-
-                    # print(len(dates))
-
-                    min_date = min(dates)
-                    max_date = max(dates)
-                    print(min_date)
-                    print(max_date)
-
                     # show the next dialog
                     self.dlg2.show()
                     self.dlg2.comboBox.addItems(list_idents)
                     self.dlg2.comboBox.setCurrentIndex(0)
-                    self.dlg2.mDateTimeEdit_From.setDateTime(min_date)
-                    self.dlg2.mDateTimeEdit_To.setDateTime(max_date)
+
                     def updateLine(text):
                         self.dlg2.lineEdit.setText(text)
 
@@ -279,7 +254,7 @@ class AnimalMovementAnalysis:
                     result2 = self.dlg2.exec_() 
 
                     if result2:
-                        print("something")
+                        print("Something was chosen")
                         range_from = self.dlg2.mDateTimeEdit_From.dateTime()
                         range_to = self.dlg2.mDateTimeEdit_To.dateTime()
                         selected_bird_index = self.dlg2.comboBox.currentIndex()
@@ -288,25 +263,7 @@ class AnimalMovementAnalysis:
                             selected_birds = list_idents[1:]
                         else:
                             selected_birds = [list_idents[selected_bird_index]]
-                        print(type(range_from))
+
                         print(range_from, range_to, selected_birds)
 
-                        # selected_features = []
-                        # for f in birds_layer.getFeatures():
-                        #     print(type(f["timedt"]))
-                        #     print(f["timedt"])
-                        #     print(type(min_date))
-                        #     print(min_date)
-                        #     if (f["timedt"] > min_date & f["timedt"] < max_date & f["ind_ident"] in selected_birds):
-                        #         selected_features.append(f)
-
-                        # print(len(selected_features))
-                        # def run1(self):
-                        #     print("Hmmmmm2")
-                        #     self.dlg2.lineEdit.setText("Helloooo2")
-                        # self.dlg2.calculateButton.clicked.connect(self.run1)
-
-
-    def updateLineTest(self, text):
-        self.dlg2.lineEdit.setText(text)
 

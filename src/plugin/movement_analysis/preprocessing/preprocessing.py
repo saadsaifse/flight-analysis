@@ -7,7 +7,7 @@ import time
 import dateutil.parser
 from datetime import datetime as dt
 
-def preprocessing (shape_layer, csv):
+def preprocessing (shape_layer):
     uri2 = "file:///F:/Dokumente/Uni_Msc/2019_SS/PIGIS/project/birds-repo/src/plugin/movement_analysis/preprocessing/data/temperature.csv?delimiter=,"
 
     start = dt.now()
@@ -57,24 +57,12 @@ def preprocessing (shape_layer, csv):
                 indexlist.append(index)
                 break
         index += 1
-
     updates = {}
     for feat in shape_layer.getFeatures():
         # split date and time values from timestamp field
         date, time = feat['timestamp'].split(" ")
         dateD = dt.strptime(date,'%Y-%m-%d')
-        # print(dateD)
         dateS = "{:%d-%B-%Y}".format(dateD)
-        # dateFull = "{:%m/%d/%y %H:%M:%S}".format(dateD)
-        # test = QDateTime(dateD)
-        # dateQ = QDateTime.fromString(feat['timestamp'])
-        # print(dateQ)
-        # Update the empty field in the shapefile
-        # now = QDateTime.currentDateTime()
-        # print(now)
-        # v = QVariant(QDateTime(now))
-        # print(v)
-        # test = dt.strptime(now.toString(Qt.ISODate), "%Y-%m-%dT%H:%M:%S")
         updates[feat.id()] = {indexlist[0]: QVariant(QDateTime(dateD)), indexlist[1]: dateS, indexlist[2]: time}
 
     end3 = dt.now()
@@ -87,16 +75,13 @@ def preprocessing (shape_layer, csv):
     total_time = end4 - end3
     print("Script new fields populating ran for : ", total_time)
 
-    vectorLyr = shape_layer
-
     infoLyr = QgsVectorLayer(uri2, 'temp', 'delimitedtext')
     caps = infoLyr.dataProvider().capabilities()
-    print(caps & QgsVectorDataProvider.AddAttributes)
-    for field in infoLyr.fields():
-        print(field.name(), field.typeName())
 
-    print("infoLyr valid? who knows")
-    print(infoLyr.isValid())
+    # for field in infoLyr.fields():
+    #     print(field.name(), field.typeName())
+
+    print("infoLyr valid? ", infoLyr.isValid())
     csvField = 'date'
     shpField = 'dateString'
     joinObject = QgsVectorLayerJoinInfo()
@@ -105,21 +90,21 @@ def preprocessing (shape_layer, csv):
     joinObject.setJoinLayerId(infoLyr.id())
     joinObject.setUsingMemoryCache(True)
     joinObject.setJoinLayer(infoLyr)
-    vectorLyr.addJoin(joinObject)
+    shape_layer.addJoin(joinObject)
 
-    caps = vectorLyr.dataProvider().capabilities()
+    caps = shape_layer.dataProvider().capabilities()
     if caps & QgsVectorDataProvider.AddAttributes:
-        res = vectorLyr.dataProvider().addAttributes([QgsField("avg_temp", QVariant.Double)])
-    vectorLyr.updateFields()
+        res = shape_layer.dataProvider().addAttributes([QgsField("avg_temp", QVariant.Double)])
+    shape_layer.updateFields()
 
     end5 = dt.now()
     total_time = end5 - end4
     print("Script joining ran for : ", total_time)
 
-    with edit(vectorLyr):
-        for feature in vectorLyr.getFeatures():
+    with edit(shape_layer):
+        for feature in shape_layer.getFeatures():
             feature.setAttribute(feature.fieldNameIndex("avg_temp"), (feature["temp_tmax"] + feature["temp_tmin"]) / 2)
-            vectorLyr.updateFeature(feature)
+            shape_layer.updateFeature(feature)
         print("Done")
 
     end5 = dt.now()
