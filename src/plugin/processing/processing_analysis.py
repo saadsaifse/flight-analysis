@@ -33,6 +33,9 @@ def constructDataObject():
         for field, attr in zip(dataSample.fields(), attributes):
             data[feature.id()][field.name()]=attr
 
+            if field.name()=="date":
+                data[feature.id()]["season"]=calculateSeasonFlight(attr)
+
     return data
 
 #Filtering function ()
@@ -61,13 +64,23 @@ def filterDataByDate(data, date_init=None, date_end=None):
     if date_init is None or date_end is None:
         data_filtered=data
     else:
-        date_init=datetime.strptime(date_init, '%Y-%m-%d')
-        date_end=datetime.strptime(date_end, '%Y-%m-%d')
+        date_init=datetime.strptime(date_init, '%Y-%m-%d %H:%M:%S')
+        date_end=datetime.strptime(date_end, '%Y-%m-%d  %H:%M:%S')
 
-        data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["date"]>=date_init and data[outer_k]["date"]<=date_end}
+        data_filtered = {outer_k: data[outer_k] for outer_k in data if datetime.strptime(data[outer_k]["timestamp"],'%Y-%m-%d %H:%M:%S')>=date_init and datetime.strptime(data[outer_k]["timestamp"],'%Y-%m-%d %H:%M:%S')<=date_end}
 
     return data_filtered
 
+# Name: filterDataBySeason()
+# Description: Create data object subset by user filters season list
+# @return dictionary data filtered between given season(s)
+
+def filterDataBySeason(data,season=["Winter", "Spring", "Summer", "Autumn"]):
+    data_filtered={}
+
+    data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["season"] in season}
+
+    return data_filtered
 
 # Name: calculateDistancePoints(xa,ya,xb,yb)
 # Description: Measure linear distance between two points in WGS84 Ellipsoid
@@ -99,8 +112,7 @@ def calculateDistancePoints(xa,ya,xb,yb):
 #       date: date in format YYYY-MM-DD
 # @return String season Winter, Spring, Summer, Autumn
 def calculateSeasonFlight(date):
-    year,month,date=date.split('-')
-
+    month=date.month()
     seasons_month={
         1:"Winter",
         2:"Winter",
@@ -116,7 +128,10 @@ def calculateSeasonFlight(date):
         12:"Winter",
     }
 
-    return seasons_month.get(int(month), "Invalid month value")
+    return seasons_month.get(int(month), 0)
+
+
+
 
 # Name: calculateDistancePerDay(data)
 # Description: calculate the total distance
@@ -126,20 +141,18 @@ def calculateSeasonFlight(date):
 
 
 
-
-
-
-
 #Functionality implementation example:
-date_init="2014-05-01"
-date_end="2014-05-31"
+
+date_init="2011-06-05 00:00:00"
+date_end="2011-06-10 23:00:00"
 bird="Eagle Owl eobs 1750 / DEW A0322"
 data=constructDataObject()
-filteredData_bird=filterDataByBird(data,bird)
-filteredData_all=filterDataByDate(data,date_init,date_end)
+#filteredData_bird=filterDataByBird(data,bird)
+#filteredData_all=filterDataByDate(data,date_init,date_end)
+filteredData_season=filterDataBySeason(data, season=["Winter"])
 
 #print (data[1049])
-print("Filtered by bird\n")
-print(filteredData_bird)
+#print("Filtered by bird\n")
+#print(filteredData_bird)
 print("Filtered by dates\n")
-print(filteredData_all)
+print(filteredData_season)
