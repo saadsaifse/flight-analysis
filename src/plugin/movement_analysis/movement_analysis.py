@@ -23,6 +23,7 @@
 """
 
 import sys
+import processing
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QVariant
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
@@ -230,12 +231,15 @@ class AnimalMovementAnalysis:
                     self.iface.messageBar().pushMessage("Error", "Unfortunately the shapefile could not be loaded. Please try again with a valid file", level=Qgis.Critical)
 
                 else:
-                    preprocessing.preprocessing(birds_layer)
+                    birds_layer.selectAll()
+                    cloned_layer = processing.run("native:saveselectedfeatures", {'INPUT': birds_layer, 'OUTPUT': 'memory:'})['OUTPUT']
+
+                    preprocessing.preprocessing(cloned_layer)
                     print("I maybe preprocessed")
-                    QgsProject.instance().addMapLayer(birds_layer)
+                    QgsProject.instance().addMapLayer(cloned_layer)
 
                     # find out whether all birds or just 1 have to be analysed
-                    features = birds_layer.getFeatures()
+                    features = cloned_layer.getFeatures()
                     ind_idents = {feature["ind_ident"] for feature in features}
                     list_idents = list(ind_idents)
                     list_idents.insert(0, "All")
