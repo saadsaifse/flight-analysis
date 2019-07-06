@@ -7,7 +7,8 @@ import time
 import dateutil.parser
 from datetime import datetime as dt
 
-def preprocessing (shape_layer):
+
+def preprocessing(shape_layer):
     uri2 = "file:///F:/Dokumente/Uni_Msc/2019_SS/PIGIS/project/birds-repo/src/plugin/movement_analysis/preprocessing/data/temperature.csv?delimiter=,"
 
     start = dt.now()
@@ -16,7 +17,12 @@ def preprocessing (shape_layer):
     # first remove the unnecessary attributes
     caps = shape_layer.dataProvider().capabilities()
     indices = []
-    useless_fields = ("start_time", "utm_east", "utm_north", "utm_zone", "battery_vo", "fix_batter", "horizontal", "key_bin_ch", "speed_accu", "status", "temperatur", "type_of_fi", "used_time_", "heading", "outlier_ma", "visible", "sensor_typ","individual", "tag_ident", "speed", "height", "study_name", "date", "time")
+    useless_fields = ("start_time", "utm_east", "utm_north", "utm_zone",
+                      "battery_vo", "fix_batter", "horizontal", "key_bin_ch",
+                      "speed_accu", "status", "temperatur", "type_of_fi",
+                      "used_time_", "heading", "outlier_ma", "visible",
+                      "sensor_typ", "individual", "tag_ident", "speed",
+                      "height", "study_name", "date", "time")
     for field in shape_layer.fields():
         for value in useless_fields:
             index = shape_layer.fields().lookupField(value)
@@ -36,8 +42,9 @@ def preprocessing (shape_layer):
     caps = shape_layer.dataProvider().capabilities()
     if caps & QgsVectorDataProvider.AddAttributes:
         res = shape_layer.dataProvider().addAttributes(
-            [QgsField("date", QVariant.Date), QgsField("dateString", QVariant.String), QgsField("timeString", QVariant.String)])
-
+            [QgsField("date", QVariant.Date), QgsField(
+                "dateString", QVariant.String), QgsField(
+                    "timeString", QVariant.String)])
 
     # update to propagate the changes
     shape_layer.updateFields()
@@ -61,9 +68,10 @@ def preprocessing (shape_layer):
     for feat in shape_layer.getFeatures():
         # split date and time values from timestamp field
         date, time = feat['timestamp'].split(" ")
-        dateD = dt.strptime(date,'%Y-%m-%d')
+        dateD = dt.strptime(date, '%Y-%m-%d')
         dateS = "{:%d-%B-%Y}".format(dateD)
-        updates[feat.id()] = {indexlist[0]: QVariant(QDateTime(dateD)), indexlist[1]: dateS, indexlist[2]: time}
+        updates[feat.id()] = {indexlist[0]: QVariant(QDateTime(dateD)),
+                              indexlist[1]: dateS, indexlist[2]: time}
 
     end3 = dt.now()
     total_time = end3 - end2
@@ -94,7 +102,8 @@ def preprocessing (shape_layer):
 
     caps = shape_layer.dataProvider().capabilities()
     if caps & QgsVectorDataProvider.AddAttributes:
-        res = shape_layer.dataProvider().addAttributes([QgsField("avg_temp", QVariant.Double)])
+        res = shape_layer.dataProvider().addAttributes([QgsField("avg_temp",
+                                                        QVariant.Double)])
     shape_layer.updateFields()
 
     end5 = dt.now()
@@ -103,7 +112,8 @@ def preprocessing (shape_layer):
 
     with edit(shape_layer):
         for feature in shape_layer.getFeatures():
-            feature.setAttribute(feature.fieldNameIndex("avg_temp"), (feature["temp_tmax"] + feature["temp_tmin"]) / 2)
+            feature.setAttribute(feature.fieldNameIndex("avg_temp"), (
+                feature["temp_tmax"] + feature["temp_tmin"]) / 2)
             shape_layer.updateFeature(feature)
         print("Done")
 
@@ -111,4 +121,3 @@ def preprocessing (shape_layer):
     total_time = end5 - end4
     print("Script time appending ran for : ", total_time)
     print("DONE")
-
