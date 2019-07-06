@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'movement_analysis_dialog_filter.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -28,26 +28,24 @@ class Ui_AnimalMovementAnalysisDialogFilter(object):
         self.lineEdit.setGeometry(QtCore.QRect(170, 290, 137, 22))
         self.lineEdit.setObjectName("lineEdit")
         self.label_5 = QtWidgets.QLabel(AnimalMovementAnalysisDialogFilter)
-        self.label_5.setGeometry(QtCore.QRect(30, 140, 170, 22))
+        self.label_5.setGeometry(QtCore.QRect(30, 90, 170, 22))
         self.label_5.setObjectName("label_5")
         self.calculateButton = QtWidgets.QPushButton(AnimalMovementAnalysisDialogFilter)
-        self.calculateButton.setGeometry(QtCore.QRect(450, 190, 93, 28))
+        self.calculateButton.setGeometry(QtCore.QRect(450, 230, 93, 28))
         self.calculateButton.setObjectName("calculateButton")
         self.label_2 = QtWidgets.QLabel(AnimalMovementAnalysisDialogFilter)
-        self.label_2.setGeometry(QtCore.QRect(30, 90, 94, 22))
+        self.label_2.setGeometry(QtCore.QRect(30, 150, 121, 22))
         self.label_2.setObjectName("label_2")
-        self.label_3 = QtWidgets.QLabel(AnimalMovementAnalysisDialogFilter)
-        self.label_3.setGeometry(QtCore.QRect(340, 90, 21, 22))
-        self.label_3.setObjectName("label_3")
-        self.mDateTimeEdit_From = QgsDateTimeEdit(AnimalMovementAnalysisDialogFilter)
-        self.mDateTimeEdit_From.setGeometry(QtCore.QRect(140, 90, 186, 22))
-        self.mDateTimeEdit_From.setObjectName("mDateTimeEdit_From")
-        self.mDateTimeEdit_To = QgsDateTimeEdit(AnimalMovementAnalysisDialogFilter)
-        self.mDateTimeEdit_To.setGeometry(QtCore.QRect(370, 90, 171, 22))
-        self.mDateTimeEdit_To.setObjectName("mDateTimeEdit_To")
         self.comboBox = QtWidgets.QComboBox(AnimalMovementAnalysisDialogFilter)
-        self.comboBox.setGeometry(QtCore.QRect(140, 140, 401, 22))
+        self.comboBox.setGeometry(QtCore.QRect(140, 90, 401, 22))
         self.comboBox.setObjectName("comboBox")
+        self.mComboBox = QgsCheckableComboBox(AnimalMovementAnalysisDialogFilter)
+        self.mComboBox.setGeometry(QtCore.QRect(170, 150, 160, 27))
+        self.mComboBox.setObjectName("mComboBox")
+        self.mComboBox.addItem("")
+        self.mComboBox.addItem("")
+        self.mComboBox.addItem("")
+        self.mComboBox.addItem("")
 
         self.retranslateUi(AnimalMovementAnalysisDialogFilter)
         self.button_box.accepted.connect(AnimalMovementAnalysisDialogFilter.accept)
@@ -61,7 +59,10 @@ class Ui_AnimalMovementAnalysisDialogFilter(object):
         self.label_4.setText(_translate("AnimalMovementAnalysisDialogFilter", "Total amount of points:"))
         self.label_5.setText(_translate("AnimalMovementAnalysisDialogFilter", "Birds to analyse"))
         self.calculateButton.setText(_translate("AnimalMovementAnalysisDialogFilter", "Calculate"))
-        self.label_2.setText(_translate("AnimalMovementAnalysisDialogFilter", "Date range from"))
-        self.label_3.setText(_translate("AnimalMovementAnalysisDialogFilter", "to"))
+        self.label_2.setText(_translate("AnimalMovementAnalysisDialogFilter", "Seasons to consider"))
+        self.mComboBox.setItemText(0, _translate("AnimalMovementAnalysisDialogFilter", "Winter"))
+        self.mComboBox.setItemText(1, _translate("AnimalMovementAnalysisDialogFilter", "Spring"))
+        self.mComboBox.setItemText(2, _translate("AnimalMovementAnalysisDialogFilter", "Summer"))
+        self.mComboBox.setItemText(3, _translate("AnimalMovementAnalysisDialogFilter", "Autumn"))
 
-from qgsdatetimeedit import QgsDateTimeEdit
+from qgscheckablecombobox import QgsCheckableComboBox
