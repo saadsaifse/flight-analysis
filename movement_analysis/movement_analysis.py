@@ -51,8 +51,10 @@ import os
 
 # import local processing files
 sys.path.insert(0, './preprocessing')
+sys.path.insert(0, './processing')
 try:
     from .preprocessing import preprocessing
+    from .processing import processing_analysis as pa
 except:
     raise
 
@@ -219,6 +221,7 @@ class AnimalMovementAnalysis:
         self.dlg1.show()
         # Run the dialog event loop
         upload_result = self.dlg1.exec_()
+        # self.dlg1.mQgsFileWidget1.clear()
         # See if OK was pressed
         if upload_result:
             # get paths to the chosen files
@@ -263,6 +266,8 @@ class AnimalMovementAnalysis:
 
                     # show the next dialog
                     self.dlg2.show()
+                    self.dlg2.comboBox.clear()
+                    # self.dlg2.mComboBox.clear()
                     self.dlg2.comboBox.addItems(list_idents)
                     self.dlg2.comboBox.setCurrentIndex(0)
                     self.dlg2.mComboBox.selectAllOptions()
@@ -287,3 +292,30 @@ class AnimalMovementAnalysis:
                             selected_birds = [list_idents[selected_bird_index]]
 
                         print(selected_seasons, selected_birds)
+
+                        # construct the data_object required in the processing
+                        data_object = pa.constructDataObject(cloned_layer)
+
+                        # sort by bird if it's only 1 or just take all of them
+                        if (len(selected_birds) == 1):
+                            filtered_by_bird = pa.filterDataByBird(
+                                data_object, selected_birds[0])
+                        else:
+                            filtered_by_bird = data_object
+
+                        # now filter by season
+                        filtered_by_bird_and_season = pa.filterDataBySeason(
+                            data_object, selected_seasons)
+                        # print(filtered_by_bird_and_season)
+
+                        # and now calculate distance per day
+                        calculos = pa.calculateDistancePerDay(
+                            filtered_by_bird_and_season)
+
+                        if (len(calculos) == 0):
+                            self.iface.messageBar().pushMessage("Error", "\
+                                Unfortunately no points were found matching \
+                                    your request", level=Qgis.Critical)
+                            filtering_result = self.dlg2.exec_()
+                        else:
+                            print(len(calculos))

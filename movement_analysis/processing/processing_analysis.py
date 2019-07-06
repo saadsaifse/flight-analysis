@@ -15,15 +15,18 @@
 import os
 from qgis.core import *
 import qgis.utils
+import collections
 
-# Name: constructDataObject()
+# Name: constructDataObject(dataSample)
 # Description: Create data object to arrange fields for processing from active shapefile
+#@args:
+#       dataSample: layer
 # @return dictionary data
 
-def constructDataObject():
+def constructDataObject(dataSample):
     data={}
 
-    dataSample = qgis.utils.iface.activeLayer();
+    # dataSample = qgis.utils.iface.activeLayer();
     features = dataSample.getFeatures()
 
     for feature in features:
@@ -104,15 +107,13 @@ def calculateDistancePoints(xa,ya,xb,yb):
 
     return distance
 
-#calculateCummulativeFDistancePerDay(data)
-
 # Name: calculateSeasonFlight(date)
 # Description: calculate the season for a given date according to the month
 # @args:
 #       date: date in format YYYY-MM-DD
 # @return String season Winter, Spring, Summer, Autumn
 def calculateSeasonFlight(date):
-    month=date.month()
+    month=date.toPyDateTime().month
     seasons_month={
         1:"Winter",
         2:"Winter",
@@ -136,23 +137,40 @@ def calculateSeasonFlight(date):
 # Name: calculateDistancePerDay(data)
 # Description: calculate the total distance
 # @args:
-#       date: date in format YYYY-MM-DD
-# @return String season Winter, Spring, Summer, Autumn
+#       date: dictionary data obvject with features filtered
+# @return:
+#       Dictionary object id_bird, date, distance, temperature
 
+def calculateDistancePerDay(data):
+    #group
+    grouped = collections.defaultdict(list)
+    bird_day_temp=collections.defaultdict(list)
+    #group by bird id
+    for outer_k in data:
+        grouped[data[outer_k]["ind_ident"]].append(data[outer_k])
+
+    #Calculate distance ON PROGRESS
+
+    return grouped
 
 
 #Functionality implementation example:
 
-date_init="2011-06-05 00:00:00"
-date_end="2011-06-10 23:00:00"
-bird="Eagle Owl eobs 1750 / DEW A0322"
-data=constructDataObject()
-#filteredData_bird=filterDataByBird(data,bird)
-#filteredData_all=filterDataByDate(data,date_init,date_end)
-filteredData_season=filterDataBySeason(data, season=["Winter"])
 
-#print (data[1049])
-#print("Filtered by bird\n")
-#print(filteredData_bird)
-print("Filtered by dates\n")
-print(filteredData_season)
+# date_init="2011-01-05 00:00:00"
+# date_end="2011-06-10 23:00:00"
+# bird="Eagle Owl eobs 1750 / DEW A0322"
+# data=constructDataObject()
+# #print(data)
+# #filteredData_bird=filterDataByBird(data,bird)
+# fDate=filterDataByDate(data,date_init,date_end)
+# fSeason=filterDataBySeason(fDate,"Spring")
+
+
+# #print (data[1049])
+# #print("Filtered by bird\n")
+# #print(filteredData_bird)
+# print("Filtered by dates\n")
+# #print(fSeason)
+# calculos=calculateDistancePerDay(fSeason)
+# print(calculos)
