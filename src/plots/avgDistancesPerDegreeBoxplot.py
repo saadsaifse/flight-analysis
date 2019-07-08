@@ -41,5 +41,5 @@ if __name__ == "__main__":
     for i in data:
         temperatures.append(i.temp)
         distances.append(i.avgDistances)
-
+    temperatures.sort()
     boxPlot(temperatures, distances)

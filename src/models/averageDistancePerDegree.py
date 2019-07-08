@@ -1,7 +1,7 @@
 import random
 
 class AverageDistancePerDegree:
-    def __init__(self, birdId = 0, avgDistance = 0, temp = 0):
+    def __init__(self, birdId = None, avgDistance = None, temp = None):
         self.birdId = birdId
         self.avgDistance = avgDistance
         self.temp = temp

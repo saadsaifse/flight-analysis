@@ -12,7 +12,7 @@ def plot(birdId, temperatures, averageDistances):
     """Plots average distances against temperatures
 
     Parameters:
-        birdId (str): The ID of the bird
+        birdId (str): The ID of the bird. If it is None, the distances are considered average of all birds
         temperatures (list): List of temperature values
         averageDistances (list): List of average distances
     """    
@@ -29,7 +29,11 @@ def plot(birdId, temperatures, averageDistances):
     ax.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
     ax.tick_params(labelsize=12, length=0)
     # add a legend
-    leg = plt.legend( [birdId], loc=1 )
+    if birdId != None:
+        leg = plt.legend( [birdId], loc=1 )
+    else:
+        leg = plt.legend( ['All birds'], loc=1 )
+
     fr = leg.get_frame()
     fr.set_facecolor('w')
     fr.set_alpha(.7)
@@ -47,5 +51,6 @@ if __name__ == "__main__":
         temperatures.append(i.temp)
         distances.append(i.avgDistance)
 
-    plot(data[0].birdId, temperatures, distances)
+    #plot(data[0].birdId, temperatures, distances)
+    plot(None, temperatures, distances)
 
