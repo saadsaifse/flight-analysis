@@ -327,4 +327,4 @@ class AnimalMovementAnalysis:
                     filtering_result = self.dlg2.exec_()
 
                     if filtering_result:
-                        print(len(self.calculos)
+                        print(len(self.calculos))
