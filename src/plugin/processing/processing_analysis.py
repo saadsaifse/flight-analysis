@@ -139,17 +139,42 @@ def calculateSeasonFlight(date):
 #       Dictionary object id_bird, date, distance, temperature
 
 def calculateDistancePerDay(data):
-    #group
-    grouped = collections.defaultdict(list)
-    bird_day_temp=collections.defaultdict(list)
+grouped = collections.defaultdict(dict)
+    birdInd=collections.defaultdict(dict)
     #group by bird id
     for outer_k in data:
-        grouped[data[outer_k]["ind_ident"]].append(data[outer_k])
+        #data=processBird(data[outer_k])
+        grouped[data[outer_k]["ind_ident"]]=data
 
-    #Calculate distance ON PROGRESS
+    for bird_id, bird_data in grouped.items():
 
-    return grouped
+        for feature,dayData in bird_data.items():
+            if feature < list(bird_data.keys())[-1]:
+                date=datetime.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
 
+                date_later=datetime.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
+                current_date=datetime.strptime(dayData['date'].toString("yyyy-MM-dd"),'%Y-%m-%d')
+
+                #Create start of the day
+                date_start=current_date+timedelta(hours=17)
+                #Create the end of the day
+                date_end=current_date+timedelta(days=1, hours=5)
+                #print ("This bird wake ups at",date_start," and goes to bed at ",date_end)
+
+                #pajaro, dia, distancia, temperatura
+                temp= bird_data[feature]['avg_temp']+bird_data[feature+1]['avg_temp']
+                distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
+
+                if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
+                    birdInd[bird_id]={'date':current_date.strftime('%Y-%m-%d'),'time':dayData['timestamp'],'distance':distance,'temp':temp}
+                else:
+                    birdInd[bird_id]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'time':dayData['timestamp'],'distance':distance,'temp':temp}
+
+                print (birdInd)
+
+                print("\n\n")
+
+    return True
 
 #Functionality implementation example:
 
