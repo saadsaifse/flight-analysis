@@ -71,7 +71,7 @@ def preprocessing(shape_layer):
         # split date and time values from timestamp field
         date, time = feat['timestamp'].split(" ")
         dateD = dt.strptime(date, '%Y-%m-%d')
-        dateS = "{:%d-%B-%Y}".format(dateD)
+        dateS = "{:%d-%b-%Y}".format(dateD)
         updates[feat.id()] = {indexlist[0]: QVariant(QDateTime(dateD)),
                               indexlist[1]: dateS, indexlist[2]: time}
 
