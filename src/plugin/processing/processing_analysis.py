@@ -139,7 +139,7 @@ def calculateSeasonFlight(date):
 #       Dictionary object id_bird, date, distance, temperature
 
 def calculateDistancePerDay(data):
-grouped = collections.defaultdict(dict)
+    grouped = collections.defaultdict(dict)
     birdInd=collections.defaultdict(dict)
     #group by bird id
     for outer_k in data:
