@@ -36,8 +36,8 @@ def constructDataObject(dataSample):
         for field, attr in zip(dataSample.fields(), attributes):
             data[feature.id()][field.name()]=attr
 
-            if field.name()=="date":
-                data[feature.id()]["season"]=calculateSeasonFlight(attr)
+            # if field.name()=="date":
+            #     data[feature.id()]["season"]=calculateSeasonFlight(attr)
 
     return data
 
@@ -113,7 +113,7 @@ def calculateDistancePoints(xa,ya,xb,yb):
 #       date: date in format YYYY-MM-DD
 # @return String season Winter, Spring, Summer, Autumn
 def calculateSeasonFlight(date):
-    month=date.toPyDateTime().month
+    month=date.month
     seasons_month={
         1:"Winter",
         2:"Winter",
@@ -129,7 +129,7 @@ def calculateSeasonFlight(date):
         12:"Winter",
     }
 
-    return seasons_month.get(int(month), 0)
+    return seasons_month.get(month, 0)
 
 
 

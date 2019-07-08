@@ -53,7 +53,7 @@ import os
 sys.path.insert(0, './preprocessing')
 sys.path.insert(0, './processing')
 try:
-    from .preprocessing import preprocessing
+    from .preprocessing import preprocessing_new as ppn
     from .processing import processing_analysis as pa
 except:
     raise
@@ -254,15 +254,21 @@ class AnimalMovementAnalysis:
 
                     # remove unnecessary attributes, join tables with the
                     # temperature file
-                    preprocessing.preprocessing(cloned_layer)
+                    birds_object = ppn.constructDataObject(cloned_layer)
+                    all_points = ppn.preprocessing(birds_object)
                     print("I maybe preprocessed")
-                    # add all to the map
-                    QgsProject.instance().addMapLayer(cloned_layer)
+                    # print(preprocessed)
+                    # # add all to the map
+                    # QgsProject.instance().addMapLayer(cloned_layer)
 
                     # find out whether all birds or just 1 have to be analysed
-                    features = cloned_layer.getFeatures()
-                    ind_idents = {feature["ind_ident"] for feature in features}
-                    list_idents = list(ind_idents)
+                    # features = cloned_layer.getFeatures()
+                    # ind_idents = {feature["ind_ident"] for feature in all_points}
+                    list_idents = []
+                    for point in all_points.values():
+                        if (point["ind_ident"] not in list_idents):
+                            list_idents.append(point["ind_ident"])
+                    # list_idents = list(ind_idents)
                     list_idents.insert(0, "All")
 
                     # show the next dialog
@@ -286,18 +292,18 @@ class AnimalMovementAnalysis:
                         print(selected_seasons, selected_birds)
 
                         # construct the data_object required in the processing
-                        data_object = pa.constructDataObject(cloned_layer)
+                        # all_points = pa.constructDataObject(cloned_layer)
 
                         # sort by bird if it's only 1 or just take all of them
                         if (len(selected_birds) == 1):
                             filtered_by_bird = pa.filterDataByBird(
-                                data_object, selected_birds[0])
+                                all_points, selected_birds[0])
                         else:
-                            filtered_by_bird = data_object
+                            filtered_by_bird = all_points
 
                         # now filter by season
                         filtered_by_bird_and_season = pa.filterDataBySeason(
-                            data_object, selected_seasons)
+                            filtered_by_bird, selected_seasons)
                         # print(filtered_by_bird_and_season)
 
                         # and now calculate distance per day
@@ -321,4 +327,4 @@ class AnimalMovementAnalysis:
                     filtering_result = self.dlg2.exec_()
 
                     if filtering_result:
-                        print(len(self.calculos))
+                        print(len(self.calculos)
