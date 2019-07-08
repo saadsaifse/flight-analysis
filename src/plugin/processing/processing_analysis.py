@@ -179,8 +179,8 @@ grouped = collections.defaultdict(dict)
 #Functionality implementation example:
 
 
-date_init="2011-01-05 00:00:00"
-date_end="2011-06-10 23:00:00"
+date_init="2011-05-01 00:00:00"
+date_end="2011-05-21 06:00:00"
 bird="Eagle Owl eobs 1750 / DEW A0322"
 data=constructDataObject()
 #print(data)
@@ -192,7 +192,8 @@ fSeason=filterDataBySeason(fDate,"Spring")
 #print (data[1049])
 #print("Filtered by bird\n")
 #print(filteredData_bird)
-print("Filtered by dates\n")
+#print("Filtered by dates\n")
 #print(fSeason)
+print("Distance\n")
 calculos=calculateDistancePerDay(fSeason)
 print(calculos)
