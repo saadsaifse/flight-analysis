@@ -212,6 +212,7 @@ class AnimalMovementAnalysis:
         # reference
         # Only create GUI ONCE in callback, so that it will only load when the
         # plugin is started
+        self.calculos = {}
         if self.first_start:
             self.first_start = False
             self.dlg1 = AnimalMovementAnalysisDialog()
@@ -267,21 +268,12 @@ class AnimalMovementAnalysis:
                     # show the next dialog
                     self.dlg2.show()
                     self.dlg2.comboBox.clear()
-                    # self.dlg2.mComboBox.clear()
                     self.dlg2.comboBox.addItems(list_idents)
                     self.dlg2.comboBox.setCurrentIndex(0)
                     self.dlg2.mComboBox.selectAllOptions()
+                    self.dlg2.button_box.setEnabled(False)
 
-                    def updateLine(text):
-                        self.dlg2.lineEdit.setText(text)
-
-                    self.dlg2.calculateButton.clicked.connect(
-                        lambda: updateLine('uh'))
-
-                    # Run the dialog event loop
-                    filtering_result = self.dlg2.exec_()
-
-                    if filtering_result:
+                    def calculatePoints():
                         print("Something was chosen")
                         selected_seasons = self.dlg2.mComboBox.checkedItems()
                         selected_bird_index = self.dlg2.comboBox.currentIndex()
@@ -309,13 +301,24 @@ class AnimalMovementAnalysis:
                         # print(filtered_by_bird_and_season)
 
                         # and now calculate distance per day
-                        calculos = pa.calculateDistancePerDay(
+                        self.calculos = pa.calculateDistancePerDay(
                             filtered_by_bird_and_season)
 
-                        if (len(calculos) == 0):
-                            self.iface.messageBar().pushMessage("Error", "\
-                                Unfortunately no points were found matching \
-                                    your request", level=Qgis.Critical)
-                            filtering_result = self.dlg2.exec_()
+                        if (len(self.calculos) == 0):
+                            self.dlg2.lineEdit.setText(
+                                "No points were found, please \
+                                    adjust your parameters")
+                            self.dlg2.button_box.setEnabled(True)
                         else:
-                            print(len(calculos))
+                            self.dlg2.lineEdit.setText(
+                                "Some points were found")
+                            self.dlg2.button_box.setEnabled(True)
+
+                    self.dlg2.calculateButton.clicked.connect(
+                        lambda: calculatePoints())
+
+                    # Run the dialog event loop
+                    filtering_result = self.dlg2.exec_()
+
+                    if filtering_result:
+                        print(len(self.calculos))
