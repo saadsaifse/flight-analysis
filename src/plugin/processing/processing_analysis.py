@@ -143,13 +143,11 @@ def calculateDistancePerDay(data):
     birdInd=collections.defaultdict(dict)
     #group by bird id
     for outer_k in data:
-        #data=processBird(data[outer_k])
         grouped[data[outer_k]["ind_ident"]]=data
 
     for bird_id, bird_data in grouped.items():
-
         for feature,dayData in bird_data.items():
-            if feature < list(bird_data.keys())[-1]:
+            if feature+1 in list(bird_data.keys()) and dayData['ind_ident']==bird_id:
                 date=datetime.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
 
                 date_later=datetime.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
@@ -162,17 +160,13 @@ def calculateDistancePerDay(data):
                 #print ("This bird wake ups at",date_start," and goes to bed at ",date_end)
 
                 #pajaro, dia, distancia, temperatura
-                temp= bird_data[feature]['avg_temp']+bird_data[feature+1]['avg_temp']
                 distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
 
                 if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
-                    birdInd[bird_id]={'date':current_date.strftime('%Y-%m-%d'),'time':dayData['timestamp'],'distance':distance,'temp':temp}
+                    birdInd[bird_id][dayData['timestamp']]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
                 else:
-                    birdInd[bird_id]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'time':dayData['timestamp'],'distance':distance,'temp':temp}
-
-                print (birdInd)
-
-                print("\n\n")
+                    #key=(current_date+timedelta(days=-1)).strftime('%Y-%m-%d')
+                    birdInd[bird_id][dayData['timestamp']]={'time':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
 
     return True
 
