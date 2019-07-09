@@ -168,9 +168,9 @@ def calculateDistancePerDay(data):
                 distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
 
                 if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
-                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp']}
+                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp'],'season':bird_data[feature]['season']}
                 else:
-                    birdInd[bird_id][i]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp']}
+                    birdInd[bird_id][i]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp'],'season':bird_data[feature]['season']}
 
                 i+=1
 
@@ -186,7 +186,7 @@ def processBird(data):
             if i+1 in list(distanceData.keys()) and distanceData[i]["date"]==distanceData[i+1]["date"]:
                 total_distance=total_distance+values["distance"]
             else:
-                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"]}
+                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"],'season':distanceData[i-1]["season"],}
                 total_distance=0
             k+=1
 
