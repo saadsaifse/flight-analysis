@@ -233,6 +233,7 @@ class AnimalMovementAnalysis:
                     "Error", "Please upload shapefile", level=Qgis.Critical)
 
             else:
+                start = dt.now()
                 # load the layer
                 birds_layer = QgsVectorLayer(birds_path, "birds layer", "ogr")
 
@@ -255,9 +256,11 @@ class AnimalMovementAnalysis:
                     # remove unnecessary attributes, join tables with the
                     # temperature file
                     birds_object = ppn.constructDataObject(cloned_layer)
+                    end1 = dt.now()
+                    total_time = end1 - start
+                    print("Constructed the whole object : ", total_time)
                     all_points = ppn.preprocessing(birds_object)
-                    print("I maybe preprocessed")
-                    # print(preprocessed)
+                    print("Preprocessed")
                     # # add all to the map
                     # QgsProject.instance().addMapLayer(cloned_layer)
 
@@ -304,20 +307,19 @@ class AnimalMovementAnalysis:
                         # now filter by season
                         filtered_by_bird_and_season = pa.filterDataBySeason(
                             filtered_by_bird, selected_seasons)
-                        # print(filtered_by_bird_and_season)
 
                         # and now calculate distance per day
                         self.calculos = pa.calculateDistancePerDay(
                             filtered_by_bird_and_season)
 
                         if (len(self.calculos) == 0):
-                            self.dlg2.lineEdit.setText(
-                                "No points were found, please \
-                                    adjust your parameters")
-                            self.dlg2.button_box.setEnabled(True)
+                            self.dlg2.lineEdit.setText("0")
+                            self.dlg2.button_box.setEnabled(False)
                         else:
-                            self.dlg2.lineEdit.setText(
-                                "Some points were found")
+                            points_amount = 0
+                            for obj in self.calculos.values():
+                                points_amount += len(obj)
+                            self.dlg2.lineEdit.setText(str(points_amount))
                             self.dlg2.button_box.setEnabled(True)
 
                     self.dlg2.calculateButton.clicked.connect(
@@ -327,4 +329,4 @@ class AnimalMovementAnalysis:
                     filtering_result = self.dlg2.exec_()
 
                     if filtering_result:
-                        print(len(self.calculos))
+                        print("Yay")

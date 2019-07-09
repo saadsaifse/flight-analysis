@@ -75,7 +75,6 @@ def preprocessing(birds_obj):
     print("Script execution started at: ", start)
 
     temperatures = createCSVObject()
-    # print(temperatures)
 
     end1 = dt.now()
     total_time = end1 - start
