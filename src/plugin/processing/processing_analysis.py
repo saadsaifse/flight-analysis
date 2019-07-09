@@ -150,10 +150,10 @@ def calculateDistancePerDay(data):
 
         for feature,dayData in bird_data.items():
             if feature+1 in list(bird_data.keys()) and dayData['ind_ident']==bird_id:
-                date=datetime.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
+                date=dt.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
 
-                date_later=datetime.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
-                current_date=datetime.strptime(dayData['date'].toString("yyyy-MM-dd"),'%Y-%m-%d')
+                date_later=dt.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
+                current_date=dayData['date']
 
                 #Create start of the day
                 date_start=current_date+timedelta(hours=17)

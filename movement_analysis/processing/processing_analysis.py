@@ -16,6 +16,7 @@ import os
 from qgis.core import *
 import qgis.utils
 import collections
+from datetime import datetime as dt, timedelta
 
 # Name: constructDataObject(dataSample)
 # Description: Create data object to arrange fields for processing from active shapefile
@@ -103,7 +104,7 @@ def calculateDistancePoints(xa,ya,xb,yb):
     point1=QgsPointXY(xa, ya)
     point2=QgsPointXY(xb,yb)
 
-    distance=d.measureLine(point1, point2)
+    distance=distanceF.measureLine(point1, point2)
 
     return distance
 
@@ -142,35 +143,51 @@ def calculateSeasonFlight(date):
 #       Dictionary object id_bird, date, distance, temperature
 
 def calculateDistancePerDay(data):
-    #group
-    grouped = collections.defaultdict(list)
-    bird_day_temp=collections.defaultdict(list)
+    grouped = collections.defaultdict(dict)
+    birdInd=collections.defaultdict(dict)
     #group by bird id
     for outer_k in data:
-        grouped[data[outer_k]["ind_ident"]].append(data[outer_k])
+        grouped[data[outer_k]["ind_ident"]]=data
 
-    #Calculate distance ON PROGRESS
+    for bird_id, bird_data in grouped.items():
+        i=0
 
-    return grouped
+        for feature,dayData in bird_data.items():
+            if feature+1 in list(bird_data.keys()) and dayData['ind_ident']==bird_id:
+                date=dt.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
 
+                date_later=dt.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
+                current_date=dayData['date']
 
-#Functionality implementation example:
+                #Create start of the day
+                date_start=current_date+timedelta(hours=17)
+                #Create the end of the day
+                date_end=current_date+timedelta(days=1, hours=5)
+                #print ("This bird wake ups at",date_start," and goes to bed at ",date_end)
 
+                distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
 
-# date_init="2011-01-05 00:00:00"
-# date_end="2011-06-10 23:00:00"
-# bird="Eagle Owl eobs 1750 / DEW A0322"
-# data=constructDataObject()
-# #print(data)
-# #filteredData_bird=filterDataByBird(data,bird)
-# fDate=filterDataByDate(data,date_init,date_end)
-# fSeason=filterDataBySeason(fDate,"Spring")
+                if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
+                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp']}
+                else:
+                    birdInd[bird_id][i]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp']}
 
+                i+=1
 
-# #print (data[1049])
-# #print("Filtered by bird\n")
-# #print(filteredData_bird)
-# print("Filtered by dates\n")
-# #print(fSeason)
-# calculos=calculateDistancePerDay(fSeason)
-# print(calculos)
+    return birdInd
+
+def processBird(data):
+    total_distance=0
+    birdDayResults=collections.defaultdict(dict)
+    k=0
+
+    for key,distanceData in data.items():
+        for i, values in distanceData.items():
+            if i+1 in list(distanceData.keys()) and distanceData[i]["date"]==distanceData[i+1]["date"]:
+                total_distance=total_distance+values["distance"]
+            else:
+                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"]}
+                total_distance=0
+            k+=1
+
+    return birdDayResults

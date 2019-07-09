@@ -330,3 +330,9 @@ class AnimalMovementAnalysis:
 
                     if filtering_result:
                         print("Yay")
+                        process_birds = pa.processBird(self.calculos)
+                        print(process_birds)
+
+
+
+
