@@ -97,6 +97,7 @@ def preprocessing(birds_obj):
         point["dateString"] = "{:%d-%b-%Y}".format(dateD)
         point["timeString"] = time
         point["season"] = calculateSeasonFlight(dateD)
+        point["month"] = dateD.month
         for row in temperatures:
             if (row["date"] == point["dateString"]):
                 point["temp"] = round(float(row["tmin"]), 2)
