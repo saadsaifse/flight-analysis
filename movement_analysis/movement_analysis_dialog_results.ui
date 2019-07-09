@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AnimalMovementAnalysisDialogResults</class>
- <widget class="QDialog" name="AnimalMovementAnalysisDialogResults">
+ <class>AnimalMovementAnalysisDialogBase</class>
+ <widget class="QDialog" name="AnimalMovementAnalysisDialogBase">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>824</height>
+    <width>1134</width>
+    <height>813</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Animal Movement Analysis Results</string>
+   <string>Animal Movement Analysis</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>770</y>
+     <x>770</x>
+     <y>760</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -32,27 +32,117 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>510</x>
      <y>30</y>
-     <width>191</width>
+     <width>121</width>
      <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
    <property name="text">
-    <string>Distance/temperature statistics</string>
+    <string>Statistics</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="statsLabel">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>110</y>
-     <width>511</width>
-     <height>321</height>
+     <x>90</x>
+     <y>320</y>
+     <width>941</width>
+     <height>411</height>
     </rect>
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="monthlyStatsButton">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>270</y>
+     <width>221</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Display monthly statistics</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="distTempButton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>270</y>
+     <width>261</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Dislpay distance/temperature distribution</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loadToMapButton">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>270</y>
+     <width>201</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Load all the points to the map</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="textEdit">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>80</y>
+     <width>321</width>
+     <height>171</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>150</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Chosen birds:</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="textEdit_2">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>80</y>
+     <width>131</width>
+     <height>171</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>140</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Chosen seasons:</string>
    </property>
   </widget>
  </widget>
@@ -61,7 +151,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>AnimalMovementAnalysisDialogResults</receiver>
+   <receiver>AnimalMovementAnalysisDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -77,7 +167,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>AnimalMovementAnalysisDialogResults</receiver>
+   <receiver>AnimalMovementAnalysisDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

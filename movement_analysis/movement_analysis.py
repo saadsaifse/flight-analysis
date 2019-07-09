@@ -29,7 +29,7 @@ import sys
 import processing
 from PyQt5.QtCore import (QSettings, QTranslator, qVersion, QCoreApplication,
                           QVariant)
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QImage, QPixmap
 from PyQt5.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
@@ -286,29 +286,29 @@ class AnimalMovementAnalysis:
 
                     def calculatePoints():
                         print("Something was chosen")
-                        selected_seasons = self.dlg2.mComboBox.checkedItems()
+                        self.selected_seasons = self.dlg2.mComboBox.checkedItems()
                         selected_bird_index = self.dlg2.comboBox.currentIndex()
 
                         if (selected_bird_index == 0):
-                            selected_birds = list_idents[1:]
+                            self.selected_birds = list_idents[1:]
                         else:
-                            selected_birds = [list_idents[selected_bird_index]]
+                            self.selected_birds = [list_idents[selected_bird_index]]
 
-                        print(selected_seasons, selected_birds)
+                        print(self.selected_seasons, self.selected_birds)
 
                         # construct the data_object required in the processing
                         # all_points = pa.constructDataObject(cloned_layer)
 
                         # sort by bird if it's only 1 or just take all of them
-                        if (len(selected_birds) == 1):
+                        if (len(self.selected_birds) == 1):
                             filtered_by_bird = pa.filterDataByBird(
-                                all_points, selected_birds[0])
+                                all_points, self.selected_birds[0])
                         else:
                             filtered_by_bird = all_points
 
                         # now filter by season
                         filtered_by_bird_and_season = pa.filterDataBySeason(
-                            filtered_by_bird, selected_seasons)
+                            filtered_by_bird, self.selected_seasons)
 
                         # and now calculate distance per day
                         self.calculos = pa.calculateDistancePerDay(
@@ -333,9 +333,21 @@ class AnimalMovementAnalysis:
                     if filtering_result:
                         print("Yay")
                         process_birds = pa.processBird(self.calculos)
+                    
                         print(process_birds)
+                        
+                        # pixmap = QPixmap(uri)
+                        # self.dlg3.label_2.setPixmap(pixmap)
+                        self.dlg3.textEdit.setText(str(self.selected_birds))
+                        self.dlg3.textEdit_2.setText(str(self.selected_seasons))
                         self.dlg3.show()
 
+                        def changePloat(path):
+                            current_dir = os.path.dirname(os.path.abspath(__file__))
+                            uri = current_dir + path
+                            pixmap = QPixmap(uri)
+                            self.dlg3.statsLabel.setPixmap(pixmap)
 
-
+                        self.dlg3.distTempButton.clicked.connect(lambda: changePloat("/plot-diagram.png"))
+                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePloat("/Download.png"))
 
