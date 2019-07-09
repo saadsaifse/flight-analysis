@@ -139,23 +139,60 @@ def calculateSeasonFlight(date):
 #       Dictionary object id_bird, date, distance, temperature
 
 def calculateDistancePerDay(data):
-    #group
-    grouped = collections.defaultdict(list)
-    bird_day_temp=collections.defaultdict(list)
+    grouped = collections.defaultdict(dict)
+    birdInd=collections.defaultdict(dict)
     #group by bird id
     for outer_k in data:
-        grouped[data[outer_k]["ind_ident"]].append(data[outer_k])
+        grouped[data[outer_k]["ind_ident"]]=data
 
-    #Calculate distance ON PROGRESS
+    for bird_id, bird_data in grouped.items():
+        i=0
 
-    return grouped
+        for feature,dayData in bird_data.items():
+            if feature+1 in list(bird_data.keys()) and dayData['ind_ident']==bird_id:
+                date=datetime.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
 
+                date_later=datetime.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
+                current_date=datetime.strptime(dayData['date'].toString("yyyy-MM-dd"),'%Y-%m-%d')
+
+                #Create start of the day
+                date_start=current_date+timedelta(hours=17)
+                #Create the end of the day
+                date_end=current_date+timedelta(days=1, hours=5)
+                #print ("This bird wake ups at",date_start," and goes to bed at ",date_end)
+
+                distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
+
+                if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
+                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
+                else:
+                    birdInd[bird_id][i]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
+
+                i+=1
+
+    return birdInd
+
+def processBird(data):
+    total_distance=0
+    birdDayResults=collections.defaultdict(dict)
+    k=0
+
+    for key,distanceData in data.items():
+        for i, values in distanceData.items():
+            if i+1 in list(distanceData.keys()) and distanceData[i]["date"]==distanceData[i+1]["date"]:
+                total_distance=total_distance+values["distance"]
+            else:
+                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"]}
+                total_distance=0
+            k+=1
+
+    return birdDayResults
 
 #Functionality implementation example:
 
 
-date_init="2011-01-05 00:00:00"
-date_end="2011-06-10 23:00:00"
+date_init="2011-05-01 00:00:00"
+date_end="2011-05-21 06:00:00"
 bird="Eagle Owl eobs 1750 / DEW A0322"
 data=constructDataObject()
 #print(data)
@@ -167,7 +204,8 @@ fSeason=filterDataBySeason(fDate,"Spring")
 #print (data[1049])
 #print("Filtered by bird\n")
 #print(filteredData_bird)
-print("Filtered by dates\n")
+#print("Filtered by dates\n")
 #print(fSeason)
+print("Distance\n")
 calculos=calculateDistancePerDay(fSeason)
-print(calculos)
+#print(calculos)
