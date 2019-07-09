@@ -99,7 +99,7 @@ def preprocessing(birds_obj):
         point["season"] = calculateSeasonFlight(dateD)
         for row in temperatures:
             if (row["date"] == point["dateString"]):
-                point["temp"] = row["tmin"]
+                point["temp"] = round(float(row["tmin"]), 2)
 
     end2 = dt.now()
     total_time = end2 - end1
