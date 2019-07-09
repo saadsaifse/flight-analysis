@@ -31,7 +31,7 @@ def scatterPlot(birdId, latitudes, longitudes, temperatures):
     fig, ax = plt.subplots()
 
     colors = getColorsForTemperaturesRange(temperatures)
-    ax.scatter(latitudes, longitudes, c=colors)
+    ax.scatter(longitudes, latitudes, c=colors)
     
     #set legend
     custom_lines = [Line2D([0], [0], marker = 'o', markerfacecolor='white', label='-99 >= t < 15', markersize=10),
