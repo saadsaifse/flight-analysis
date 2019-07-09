@@ -36,7 +36,7 @@ if __name__ == "__main__":
         month = data[0][i]
         temp = data[2][i]
         if temp != None:
-            monthWithTemp.append("{} ({})".format(month, str(temp)))
+            monthWithTemp.append("{} ({}°C)".format(month, str(temp)))
     
     data[0] = monthWithTemp
 
