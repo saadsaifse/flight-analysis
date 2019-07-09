@@ -36,7 +36,8 @@ from PyQt5.QtWidgets import QAction
 from .resources import *
 # Import the code for the dialog
 from .movement_analysis_dialog import (AnimalMovementAnalysisDialog,
-                                       AnimalMovementAnalysisDialogFilter)
+                                       AnimalMovementAnalysisDialogFilter,
+                                       AnimalMovementAnalysisDialogResults)
 # import os.path
 from qgis.core import (QgsProject, QgsColorRampShader,
                        Qgis, QgsVectorLayer, QgsRasterLayer,
@@ -217,6 +218,7 @@ class AnimalMovementAnalysis:
             self.first_start = False
             self.dlg1 = AnimalMovementAnalysisDialog()
             self.dlg2 = AnimalMovementAnalysisDialogFilter()
+            self.dlg3 = AnimalMovementAnalysisDialogResults()
 
         # show the dialog
         self.dlg1.show()
@@ -332,6 +334,7 @@ class AnimalMovementAnalysis:
                         print("Yay")
                         process_birds = pa.processBird(self.calculos)
                         print(process_birds)
+                        self.dlg3.show()
 
 
 
