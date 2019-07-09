@@ -186,7 +186,7 @@ def processBird(data):
             if i+1 in list(distanceData.keys()) and distanceData[i]["date"]==distanceData[i+1]["date"]:
                 total_distance=total_distance+values["distance"]
             else:
-                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"],'season':distanceData[i-1]["season"],}
+                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"],'season':distanceData[i-1]["season"]}
                 total_distance=0
             k+=1
 
