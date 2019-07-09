@@ -146,6 +146,8 @@ def calculateDistancePerDay(data):
         grouped[data[outer_k]["ind_ident"]]=data
 
     for bird_id, bird_data in grouped.items():
+        i=0
+
         for feature,dayData in bird_data.items():
             if feature+1 in list(bird_data.keys()) and dayData['ind_ident']==bird_id:
                 date=datetime.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
@@ -159,16 +161,32 @@ def calculateDistancePerDay(data):
                 date_end=current_date+timedelta(days=1, hours=5)
                 #print ("This bird wake ups at",date_start," and goes to bed at ",date_end)
 
-                #pajaro, dia, distancia, temperatura
                 distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
 
                 if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
-                    birdInd[bird_id][dayData['timestamp']]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
+                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
                 else:
-                    #key=(current_date+timedelta(days=-1)).strftime('%Y-%m-%d')
-                    birdInd[bird_id][dayData['timestamp']]={'time':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
+                    birdInd[bird_id][i]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp']}
 
-    return True
+                i+=1
+
+    return birdInd
+
+def processBird(data):
+    total_distance=0
+    birdDayResults=collections.defaultdict(dict)
+    k=0
+
+    for key,distanceData in data.items():
+        for i, values in distanceData.items():
+            if i+1 in list(distanceData.keys()) and distanceData[i]["date"]==distanceData[i+1]["date"]:
+                total_distance=total_distance+values["distance"]
+            else:
+                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':total_distance,'temp':distanceData[i-1]["temp"]}
+                total_distance=0
+            k+=1
+
+    return birdDayResults
 
 #Functionality implementation example:
 
