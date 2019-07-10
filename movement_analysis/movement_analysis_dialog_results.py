@@ -18,7 +18,7 @@ class Ui_AnimalMovementAnalysisDialogBase(object):
         self.button_box.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.button_box.setObjectName("button_box")
         self.label = QtWidgets.QLabel(AnimalMovementAnalysisDialogBase)
-        self.label.setGeometry(QtCore.QRect(450, 30, 121, 21))
+        self.label.setGeometry(QtCore.QRect(380, 30, 221, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label.setFont(font)
@@ -65,7 +65,7 @@ class Ui_AnimalMovementAnalysisDialogBase(object):
     def retranslateUi(self, AnimalMovementAnalysisDialogBase):
         _translate = QtCore.QCoreApplication.translate
         AnimalMovementAnalysisDialogBase.setWindowTitle(_translate("AnimalMovementAnalysisDialogBase", "Animal Movement Analysis"))
-        self.label.setText(_translate("AnimalMovementAnalysisDialogBase", "Statistics"))
+        self.label.setText(_translate("AnimalMovementAnalysisDialogBase", "Visual Analysis of Data"))
         self.scatterplotButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Display distance/temperature scatterplot"))
         self.textEdit_2.setHtml(_translate("AnimalMovementAnalysisDialogBase", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -81,5 +81,5 @@ class Ui_AnimalMovementAnalysisDialogBase(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.label_5.setText(_translate("AnimalMovementAnalysisDialogBase", "Chosen birds"))
         self.distTempButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Dislpay distance/temperature boxplots"))
-        self.monthlyStatsButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Display monthly statistics"))
+        self.monthlyStatsButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Display monthly bar charts "))
 

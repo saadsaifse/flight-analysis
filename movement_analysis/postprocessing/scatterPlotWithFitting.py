@@ -20,11 +20,12 @@ def getColorsForTemperaturesRange(temperatures):
     return colors
 
 def scatterPlot(data, shouldReturn):
+    plt.clf()
     # Showing multiple boxplots on the same window
     plt.style.use('ggplot')
 
     fig = plt.figure(1)
-    fig.set_size_inches(9, 9)
+    fig.set_size_inches(9, 6)
     
     #colors = getColorsForTemperaturesRange(temperatures)
     
@@ -35,8 +36,8 @@ def scatterPlot(data, shouldReturn):
     plt.plot(x_plot, m * x_plot + b, '-')
 
     # set the axis labels
-    axes.set_xlabel(r'$temperature$', fontsize=14, labelpad=10)
-    axes.set_ylabel(r'$distance$', fontsize=14, labelpad=10, rotation=90)
+    axes.set_xlabel(r'$temperature °C $', fontsize=14, labelpad=10)
+    axes.set_ylabel(r'$distance in kilometers$', fontsize=14, labelpad=10, rotation=90)
 
      # Customize the plot
     axes.grid(1, ls='--', color='k', alpha=0.5, lw=1)

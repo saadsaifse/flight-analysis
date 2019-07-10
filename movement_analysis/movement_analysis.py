@@ -296,12 +296,18 @@ class AnimalMovementAnalysis:
                         self.selected_seasons = self.dlg2.mComboBox.checkedItems()
                         selected_bird_index = self.dlg2.comboBox.currentIndex()
 
+                        start2 = dt.now()
+
                         if (selected_bird_index == 0):
                             self.selected_birds = list_idents[1:]
                         else:
                             self.selected_birds = [list_idents[selected_bird_index]]
 
                         print(self.selected_seasons, self.selected_birds)
+
+                        end2 = dt.now()
+                        total_time = end2 - start2
+                        print("Set up the filters: ", total_time)
 
                         # construct the data_object required in the processing
                         # all_points = pa.constructDataObject(cloned_layer)
@@ -314,21 +320,33 @@ class AnimalMovementAnalysis:
                             filtered_by_bird = all_points
 
                         # now filter by season
-                        filtered_by_bird_and_season = pa.filterDataBySeason(
-                            filtered_by_bird, self.selected_seasons)
+                        print(len(self.selected_seasons))
+                        if (len(self.selected_seasons) < 4):
+                            filtered_by_bird_and_season = pa.filterDataBySeason(
+                                filtered_by_bird, self.selected_seasons)
+                        else:
+                            filtered_by_bird_and_season = filtered_by_bird
+
+                        end3 = dt.now()
+                        total_time = end3 - end2
+                        print("Filtered the points: ", total_time)
 
                         # and now calculate distance per day
                         self.calculos = pa.calculateDistancePerDay(
                             filtered_by_bird_and_season)
 
-                        if (len(self.calculos) == 0):
-                            self.dlg2.lineEdit.setText("0")
+                        end4 = dt.now()
+                        total_time = end4 - end3
+                        print("Distance per day done: ", total_time)
+
+                        if (not self.calculos):
+                            self.dlg2.lineEdit.setText("No")
                             self.dlg2.button_box.setEnabled(False)
                         else:
-                            points_amount = 0
-                            for obj in self.calculos.values():
-                                points_amount += len(obj)
-                            self.dlg2.lineEdit.setText(str(points_amount))
+                            # points_amount = 0
+                            # for obj in self.calculos.values():
+                            #     points_amount += len(obj)
+                            self.dlg2.lineEdit.setText("Yes")
                             self.dlg2.button_box.setEnabled(True)
 
                     self.dlg2.calculateButton.clicked.connect(
@@ -339,25 +357,43 @@ class AnimalMovementAnalysis:
 
                     if filtering_result:
                         print("Yay")
+                        end4 = dt.now()
                         process_birds = pa.processBird(self.calculos)
+
+                        end5 = dt.now()
+                        total_time = end5 - end4
+                        print("Processed birds ", total_time)
                     
-                        print(process_birds)
+                        # print(process_birds)
                         by_season = pa.monthlyDistanceTemp(process_birds)
-                        print(by_season)
+                        
+                        end6 = dt.now()
+                        total_time = end6 - end5
+                        print("Did monthly distance temp: ", total_time)
 
                         to_scatter = pa.tempAndDist(process_birds)
-                        print(to_scatter)
+
+                        end7 = dt.now()
+                        total_time = end7 - end6
+                        print("Prepared scatterplot data: ", total_time)
 
                         by_temp = pa.distancePerTemp(process_birds)
 
-                        self.dlg3.textEdit.setText(str(self.selected_birds))
-                        self.dlg3.textEdit_2.setText(str(self.selected_seasons))
+                        end8 = dt.now()
+                        total_time = end8 - end7
+                        print("Prepared data for dist per temp: ", total_time)
+
+                        self.dlg3.textEdit.setText('\n'.join(self.selected_birds))
+                        self.dlg3.textEdit_2.setText('\n'.join(self.selected_seasons))
                         
                         self.dlg3.show()
                         # self.dlg3.showPlotButton.setEnabled(False)
 
                         def changePlot(kind, popup=False):
-                            # tempPlot, monthPlot = None
+                            tempPlot = None 
+                            monthPlot = None
+                            pixmap = None
+                            scatterPlot = None
                             current_dir = os.path.dirname(os.path.abspath(__file__))
                             if (kind == "seasons"):
                                 if (popup):

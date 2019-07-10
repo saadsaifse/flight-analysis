@@ -52,7 +52,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Total amount of points:</string>
+    <string>Points found?        -</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit">

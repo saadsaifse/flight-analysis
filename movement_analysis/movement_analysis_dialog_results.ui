@@ -32,9 +32,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>380</x>
      <y>30</y>
-     <width>121</width>
+     <width>221</width>
      <height>21</height>
     </rect>
    </property>
@@ -44,7 +44,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Statistics</string>
+    <string>Visual Analysis of Data</string>
    </property>
   </widget>
   <widget class="QLabel" name="statsLabel">
@@ -184,7 +184,7 @@ p, li { white-space: pre-wrap; }
     </rect>
    </property>
    <property name="text">
-    <string>Display monthly statistics</string>
+    <string>Display monthly bar charts </string>
    </property>
   </widget>
  </widget>

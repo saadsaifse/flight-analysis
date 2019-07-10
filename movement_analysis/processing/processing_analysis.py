@@ -17,6 +17,7 @@ from qgis.core import *
 import qgis.utils
 import collections
 from datetime import datetime, timedelta
+from math import radians, cos, sin, asin, sqrt
 
 # Name: constructDataObject(dataSample)
 # Description: Create data object to arrange fields for processing from active shapefile
@@ -95,18 +96,36 @@ def filterDataBySeason(data,season=["Winter", "Spring", "Summer", "Autumn"]):
 #       yb: latitude pointB
 # @return float distance in meters
 
-def calculateDistancePoints(xa,ya,xb,yb):
-    distance=0
+# def calculateDistancePoints(xa,ya,xb,yb):
+#     distance=0
 
-    distanceF = QgsDistanceArea()
-    distanceF.setEllipsoid('WGS84')
+#     distanceF = QgsDistanceArea()
+#     distanceF.setEllipsoid('WGS84')
 
-    point1=QgsPointXY(xa, ya)
-    point2=QgsPointXY(xb,yb)
+#     point1=QgsPointXY(xa, ya)
+#     point2=QgsPointXY(xb,yb)
 
-    distance=distanceF.measureLine(point1, point2)
+#     distance=distanceF.measureLine(point1, point2)
 
-    return distance
+#     return distance
+
+def calculateDistancePoints(lon1,lat1,lon2,lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371  # Radius of earth in kilometers. Use 3956 for miles
+    # returns in km
+    return c * r
 
 # Name: calculateSeasonFlight(date)
 # Description: calculate the season for a given date according to the month

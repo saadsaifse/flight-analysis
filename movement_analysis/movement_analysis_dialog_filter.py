@@ -56,7 +56,7 @@ class Ui_AnimalMovementAnalysisDialogFilter(object):
         _translate = QtCore.QCoreApplication.translate
         AnimalMovementAnalysisDialogFilter.setWindowTitle(_translate("AnimalMovementAnalysisDialogFilter", "Animal Movement Analysis"))
         self.label.setText(_translate("AnimalMovementAnalysisDialogFilter", "Filter dataset"))
-        self.label_4.setText(_translate("AnimalMovementAnalysisDialogFilter", "Total amount of points:"))
+        self.label_4.setText(_translate("AnimalMovementAnalysisDialogFilter", "Points found?        -"))
         self.label_5.setText(_translate("AnimalMovementAnalysisDialogFilter", "Birds to analyse"))
         self.calculateButton.setText(_translate("AnimalMovementAnalysisDialogFilter", "Calculate"))
         self.label_2.setText(_translate("AnimalMovementAnalysisDialogFilter", "Seasons to consider"))
