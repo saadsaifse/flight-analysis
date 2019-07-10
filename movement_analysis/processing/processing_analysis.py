@@ -221,7 +221,7 @@ def monthlyDistanceTemp(distanceData):
 
 def createMonthList():
     monthList=[]
-    monthList=['Jan','Feb','Mar','Apr','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    monthList=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
     return monthList
 
