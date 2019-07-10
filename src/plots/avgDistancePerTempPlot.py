@@ -2,11 +2,12 @@ import os
 import sys
 import pylab as plt
 
-def plot(data):
+def plot(data, shouldReturn):
     """Takes formatted data and plots a boxplot
 
     Parameters:
         data: Two dimensional list, index 0 contains lists of temperatures, index 1 contains list of lists of avg. distances
+        shouldReturn: Boolean value determining if the plot should return or show the plot. Default is plot
     """    
 
     plt.style.use('ggplot')
@@ -22,6 +23,10 @@ def plot(data):
     ax.tick_params(labelsize=12, length=0)
 
     plt.title('Distances per temperature')
+
+    if shouldReturn:
+        return plt
+    
     plt.show()
 
 if __name__ == "__main__":
