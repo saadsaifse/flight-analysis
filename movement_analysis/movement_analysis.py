@@ -335,7 +335,8 @@ class AnimalMovementAnalysis:
                         process_birds = pa.processBird(self.calculos)
                     
                         print(process_birds)
-                        
+                        by_season = pa.monthlyDistanceTemp(process_birds)
+                        print(by_season)
                         # pixmap = QPixmap(uri)
                         # self.dlg3.label_2.setPixmap(pixmap)
                         self.dlg3.textEdit.setText(str(self.selected_birds))
