@@ -29,7 +29,7 @@ import sys
 import processing
 from PyQt5.QtCore import (QSettings, QTranslator, qVersion, QCoreApplication,
                           QVariant)
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QImage, QPixmap
 from PyQt5.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
@@ -53,12 +53,18 @@ import os
 # import local processing files
 sys.path.insert(0, './preprocessing')
 sys.path.insert(0, './processing')
+sys.path.insert(0, '.postprocessing')
 try:
     from .preprocessing import preprocessing_new as ppn
     from .processing import processing_analysis as pa
+    from .postprocessing import avgDistancePerMonthPlot as month_plot
+    from .postprocessing import avgDistancePerTempPlot as temp_plot
 except:
     raise
 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
@@ -286,29 +292,29 @@ class AnimalMovementAnalysis:
 
                     def calculatePoints():
                         print("Something was chosen")
-                        selected_seasons = self.dlg2.mComboBox.checkedItems()
+                        self.selected_seasons = self.dlg2.mComboBox.checkedItems()
                         selected_bird_index = self.dlg2.comboBox.currentIndex()
 
                         if (selected_bird_index == 0):
-                            selected_birds = list_idents[1:]
+                            self.selected_birds = list_idents[1:]
                         else:
-                            selected_birds = [list_idents[selected_bird_index]]
+                            self.selected_birds = [list_idents[selected_bird_index]]
 
-                        print(selected_seasons, selected_birds)
+                        print(self.selected_seasons, self.selected_birds)
 
                         # construct the data_object required in the processing
                         # all_points = pa.constructDataObject(cloned_layer)
 
                         # sort by bird if it's only 1 or just take all of them
-                        if (len(selected_birds) == 1):
+                        if (len(self.selected_birds) == 1):
                             filtered_by_bird = pa.filterDataByBird(
-                                all_points, selected_birds[0])
+                                all_points, self.selected_birds[0])
                         else:
                             filtered_by_bird = all_points
 
                         # now filter by season
                         filtered_by_bird_and_season = pa.filterDataBySeason(
-                            filtered_by_bird, selected_seasons)
+                            filtered_by_bird, self.selected_seasons)
 
                         # and now calculate distance per day
                         self.calculos = pa.calculateDistancePerDay(
@@ -333,9 +339,53 @@ class AnimalMovementAnalysis:
                     if filtering_result:
                         print("Yay")
                         process_birds = pa.processBird(self.calculos)
+                    
                         print(process_birds)
+                        by_season = pa.monthlyDistanceTemp(process_birds)
+                        print(by_season)
+
+                        by_temp = pa.distancePerTemp(process_birds)
+
+                        self.dlg3.textEdit.setText(str(self.selected_birds))
+                        self.dlg3.textEdit_2.setText(str(self.selected_seasons))
+                        
                         self.dlg3.show()
+                        # self.dlg3.showPlotButton.setEnabled(False)
 
+                        def changePlot(kind, popup=False):
+                            # tempPlot, monthPlot = None
+                            current_dir = os.path.dirname(os.path.abspath(__file__))
+                            if (kind == "seasons"):
+                                if (popup):
+                                    monthPlot = month_plot.plot(by_season, True)
+                                    monthPlot.show()
+                                else:
+                                    self.currentPlot = "seasons"
+                                    uri = current_dir + "/seasonsPlot.png"
+                                    if (not os.path.isfile(uri)):
+                                        monthPlot = month_plot.plot(by_season, True)
+                                        monthPlot.savefig(uri, bbox_inches='tight')
 
+                                    pixmap = QPixmap(uri)
+                                    self.dlg3.statsLabel.setPixmap(pixmap)
+                                    self.dlg3.showPlotButton.setEnabled(True)
+                            elif (kind == "temperatures"):
+                                if (popup):
+                                    tempPlot = temp_plot.plot(by_temp, True)
+                                    tempPlot.show()
+                                else:
+                                    self.currentPlot = "temperatures"
+                                    uri = current_dir + "/temperaturesPlot.png"
+                                    if (not os.path.isfile(uri)):
+                                        tempPlot = temp_plot.plot(by_temp, True)
+                                        tempPlot.savefig(uri, bbox_inches='tight')
+                                    
+                                    pixmap = QPixmap(uri)
+                                    self.dlg3.statsLabel.setPixmap(pixmap)
+                                    self.dlg3.showPlotButton.setEnabled(True)
 
+                        self.dlg3.distTempButton.clicked.connect(lambda: changePlot("temperatures"))
+                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePlot("seasons"))
+                        # if (self.dlg3.showPlotButton):
+                        self.dlg3.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, True))
 
