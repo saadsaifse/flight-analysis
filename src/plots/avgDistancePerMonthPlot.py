@@ -2,11 +2,12 @@ import os
 import sys
 import pylab as plt
 
-def plot(data):
+def plot(data, shouldReturn = False):
     """Takes three dimensional list of Months, Average Distances and Average temperatures and plots them
 
     Parameters:
         data: Three dimensional list, index 0 contains lists of months, index 1 contains lists of avg. distances while index 2 contains list of avg. temperatures
+        shouldReturn: Boolean value determining if the plot should return or show the plot. Default is plot
     """    
     yLimit = max(data[1]) + 5
     winterData = [data[0][0:2], data[1][0:2], data[2][0:2]]
@@ -65,9 +66,11 @@ def plot(data):
     ax3.tick_params(labelsize=12, length=0)
     ax3.set_title('Average distances in autumn months')
     ax3.set_ylim(0,yLimit)    
-    
-    return plt
-    #plt.show()
+   
+    if shouldReturn:
+        return plt
+
+    plt.show()
 
 def appendTemperaturesInMonths(data):
     monthWithTemp = []
