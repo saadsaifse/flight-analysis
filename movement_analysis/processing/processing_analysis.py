@@ -251,3 +251,16 @@ def distancePerTemp(distanceData):
     total=[list(temp.keys()),second]
 
     return total
+
+def tempAndDist(distanceData):
+    temp=[]
+    dist=[]
+    merge=[]
+
+    for key, values in distanceData.items():
+        temp.append(values["temp"])
+        dist.append(values["distance"])
+
+    merge=[[temp],[dist]]
+
+    return merge
