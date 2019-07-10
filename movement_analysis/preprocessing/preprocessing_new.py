@@ -67,7 +67,7 @@ def createCSVObject():
         reader = csv.DictReader(infile)
         for line in reader:
             temperatures.append(line)
-    
+
     return temperatures
 
 def preprocessing(birds_obj):
@@ -87,12 +87,12 @@ def preprocessing(birds_obj):
                       "used_time_", "heading", "outlier_ma", "visible",
                       "sensor_typ", "individual", "tag_ident", "speed",
                       "height", "study_name", "date", "time"]
-    
+
     for point in birds_obj.values():
         for useless in useless_fields:
             point.pop(useless, None)
         date, time = point["timestamp"].split(" ")
-        dateD = dt.strptime(date, '%Y-%m-%d')   
+        dateD = dt.strptime(date, '%Y-%m-%d')
         point["date"] = dateD
         point["dateString"] = "{:%d-%b-%Y}".format(dateD)
         point["timeString"] = time
@@ -100,7 +100,7 @@ def preprocessing(birds_obj):
         point["month"] = dateD.month
         for row in temperatures:
             if (row["date"] == point["dateString"]):
-                point["temp"] = round(float(row["tmin"]), 2)
+                point["temp"] = round(float(row["tmin"]))
 
     end2 = dt.now()
     total_time = end2 - end1

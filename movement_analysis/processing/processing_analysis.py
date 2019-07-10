@@ -186,8 +186,46 @@ def processBird(data):
             if i+1 in list(distanceData.keys()) and distanceData[i]["date"]==distanceData[i+1]["date"]:
                 total_distance=total_distance+values["distance"]
             else:
-                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':round(total_distance,2),'temp':distanceData[i-1]["temp"],'season':distanceData[i-1]["season"]}
+                birdDayResults[k]={'bird_id':key,'date':distanceData[i-1]["date"],'distance':round(total_distance),'temp':distanceData[i-1]["temp"],'season':distanceData[i-1]["season"]}
                 total_distance=0
             k+=1
 
     return birdDayResults
+
+def monthlyDistanceTemp(distanceData):
+    monthlyDistanceTemp=collections.defaultdict(list)
+    avg_temp=createEmptyList()
+    avg_dist=createEmptyList()
+    total_distance=0
+    total_temperature=0
+
+    monthList=createMonthList()
+    k=1
+
+    for i, values in distanceData.items():
+        if i+1 in list(distanceData.keys()) and distanceData[i]["month"]==distanceData[i+1]["month"]:
+            total_distance=total_distance+values["distance"]
+            total_temperature=total_temperature+values["temp"]
+            k+=1
+        else:
+            avg_temp[distanceData[i]["month"]-1]=round(total_distance/k)
+            avg_dist[distanceData[i]["month"]-1]=round(total_temperature/k)
+
+            total_distance=0
+            total_temperature=0
+            k=1
+
+    monthlyDistanceTemp=[monthList,avg_temp,avg_dist]
+
+    return monthlyDistanceTemp
+
+def createMonthList():
+    monthList=[]
+    monthList=['Jan','Feb','Mar','Apr','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
+    return monthList
+
+def createEmptyList():
+    emptyList=[0,0,0,0,0,0,0,0,0,0,0,0]
+
+    return emptyList
