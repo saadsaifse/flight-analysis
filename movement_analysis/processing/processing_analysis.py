@@ -261,6 +261,6 @@ def tempAndDist(distanceData):
         temp.append(values["temp"])
         dist.append(values["distance"])
 
-    merge=[[temp],[dist]]
+    merge=[temp,dist]
 
     return merge
