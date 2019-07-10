@@ -28,7 +28,7 @@ def plot(data, shouldReturn = False):
     #set up 4 plots
     plt.style.use('ggplot')
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
-
+    fig.set_size_inches(10,7)
     #plot first graph
     ax0.bar(winterData[0], winterData[1], color='#3773FC', lw = 1)
     ax0.plot(winterData[1], color='black', alpha=0.3, linestyle='--')    
