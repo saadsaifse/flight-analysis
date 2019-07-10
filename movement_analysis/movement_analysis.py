@@ -59,6 +59,7 @@ try:
     from .processing import processing_analysis as pa
     from .postprocessing import avgDistancePerMonthPlot as month_plot
     from .postprocessing import avgDistancePerTempPlot as temp_plot
+    from .postprocessing import scatterPlotWithFitting as scatter_plot
 except:
     raise
 
@@ -344,6 +345,9 @@ class AnimalMovementAnalysis:
                         by_season = pa.monthlyDistanceTemp(process_birds)
                         print(by_season)
 
+                        to_scatter = pa.tempAndDist(process_birds)
+                        print(to_scatter)
+
                         by_temp = pa.distancePerTemp(process_birds)
 
                         self.dlg3.textEdit.setText(str(self.selected_birds))
@@ -384,8 +388,24 @@ class AnimalMovementAnalysis:
                                     self.dlg3.statsLabel.setPixmap(pixmap)
                                     self.dlg3.showPlotButton.setEnabled(True)
 
+                            elif (kind == "scatter"):
+                                if (popup):
+                                    scatterPlot = scatter_plot.scatterPlot(to_scatter, True)
+                                    scatterPlot.show()
+                                else:
+                                    self.currentPlot = "scatter"
+                                    uri = current_dir + "/scatterPlot.png"
+                                    if (not os.path.isfile(uri)):
+                                        scatterPlot = scatter_plot.scatterPlot(to_scatter, True)
+                                        scatterPlot.savefig(uri, bbox_inches='tight')
+                                    
+                                    pixmap = QPixmap(uri)
+                                    self.dlg3.statsLabel.setPixmap(pixmap)
+                                    self.dlg3.showPlotButton.setEnabled(True)
+
                         self.dlg3.distTempButton.clicked.connect(lambda: changePlot("temperatures"))
                         self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePlot("seasons"))
-                        # if (self.dlg3.showPlotButton):
+                        self.dlg3.scatterplotButton.clicked.connect(lambda: changePlot("scatter"))
+
                         self.dlg3.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, True))
 

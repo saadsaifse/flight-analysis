@@ -60,17 +60,17 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="loadToMapButton">
+  <widget class="QPushButton" name="scatterplotButton">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>650</x>
      <y>190</y>
-     <width>201</width>
+     <width>251</width>
      <height>28</height>
     </rect>
    </property>
    <property name="text">
-    <string>Load all the points to the map</string>
+    <string>Display distance/temperature scatterplot</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="textEdit_2">
@@ -164,14 +164,14 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="distTempButton">
    <property name="geometry">
     <rect>
-     <x>380</x>
+     <x>340</x>
      <y>190</y>
      <width>261</width>
      <height>28</height>
     </rect>
    </property>
    <property name="text">
-    <string>Dislpay distance/temperature distribution</string>
+    <string>Dislpay distance/temperature boxplots</string>
    </property>
   </widget>
   <widget class="QPushButton" name="monthlyStatsButton">
