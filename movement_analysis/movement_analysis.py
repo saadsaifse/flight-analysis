@@ -53,9 +53,12 @@ import os
 # import local processing files
 sys.path.insert(0, './preprocessing')
 sys.path.insert(0, './processing')
+sys.path.insert(0, '.postprocessing')
 try:
     from .preprocessing import preprocessing_new as ppn
     from .processing import processing_analysis as pa
+    from .postprocessing import avgDistancePerMonthPlot as month_plot
+    from .postprocessing import avgDistancePerTempPlot as temp_plot
 except:
     raise
 
@@ -340,36 +343,49 @@ class AnimalMovementAnalysis:
                         print(process_birds)
                         by_season = pa.monthlyDistanceTemp(process_birds)
                         print(by_season)
-                        # pixmap = QPixmap(uri)
-                        # self.dlg3.label_2.setPixmap(pixmap)
+
+                        by_temp = pa.distancePerTemp(process_birds)
+
                         self.dlg3.textEdit.setText(str(self.selected_birds))
                         self.dlg3.textEdit_2.setText(str(self.selected_seasons))
                         
                         self.dlg3.show()
                         # self.dlg3.showPlotButton.setEnabled(False)
 
-                        def changePlot(path, numbers, popup=False):
-                            plt.clf()
-                            self.currentPlot = path
+                        def changePlot(kind, popup=False):
+                            # tempPlot, monthPlot = None
                             current_dir = os.path.dirname(os.path.abspath(__file__))
-                            uri = current_dir + path
-                            if (not os.path.isfile(uri)):
-                                print("doesn't exist yet")
-                                plt.plot(numbers)
-                                plt.ylabel('some numbers')
-                                plt.savefig(uri, bbox_inches='tight')
-                                
-                            pixmap = QPixmap(uri)
-                            self.dlg3.statsLabel.setPixmap(pixmap)
-                            self.dlg3.showPlotButton.setEnabled(True)
-                            if (popup):
-                                plt.plot(numbers)
-                                plt.ylabel('some numbers')
-                                plt.show()
+                            if (kind == "seasons"):
+                                if (popup):
+                                    monthPlot = month_plot.plot(by_season, True)
+                                    monthPlot.show()
+                                else:
+                                    self.currentPlot = "seasons"
+                                    uri = current_dir + "/seasonsPlot.png"
+                                    if (not os.path.isfile(uri)):
+                                        monthPlot = month_plot.plot(by_season, True)
+                                        monthPlot.savefig(uri, bbox_inches='tight')
 
+                                    pixmap = QPixmap(uri)
+                                    self.dlg3.statsLabel.setPixmap(pixmap)
+                                    self.dlg3.showPlotButton.setEnabled(True)
+                            elif (kind == "temperatures"):
+                                if (popup):
+                                    tempPlot = temp_plot.plot(by_temp, True)
+                                    tempPlot.show()
+                                else:
+                                    self.currentPlot = "temperatures"
+                                    uri = current_dir + "/temperaturesPlot.png"
+                                    if (not os.path.isfile(uri)):
+                                        tempPlot = temp_plot.plot(by_temp, True)
+                                        tempPlot.savefig(uri, bbox_inches='tight')
+                                    
+                                    pixmap = QPixmap(uri)
+                                    self.dlg3.statsLabel.setPixmap(pixmap)
+                                    self.dlg3.showPlotButton.setEnabled(True)
 
-                        self.dlg3.distTempButton.clicked.connect(lambda: changePlot("/distTemp.png", [1,2,3,4]))
-                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePlot("/monthlyStats.png", [4,3,2,1]))
+                        self.dlg3.distTempButton.clicked.connect(lambda: changePlot("temperatures"))
+                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePlot("seasons"))
                         # if (self.dlg3.showPlotButton):
-                        self.dlg3.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, [4,3,2,1], True))
+                        self.dlg3.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, True))
 
