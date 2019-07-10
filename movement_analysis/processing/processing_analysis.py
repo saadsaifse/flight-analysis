@@ -208,14 +208,17 @@ def monthlyDistanceTemp(distanceData):
             total_temperature=total_temperature+values["temp"]
             k+=1
         else:
-            temp[distanceData[i]["month"]-1]=round(total_distance/k)
-            avg_dist[distanceData[i]["month"]-1]=round(total_temperature/k)
+            total_distance=total_distance+values["distance"]
+            total_temperature=total_temperature+values["temp"]
+
+            avg_dist[distanceData[i]["month"]-1]=round(total_distance/k)
+            temp[distanceData[i]["month"]-1]=round(total_temperature/k)
 
             total_distance=0
             total_temperature=0
             k=1
 
-    monthlyDistanceTemp=[monthList,temp,avg_dist]
+    monthlyDistanceTemp=[monthList,avg_dist,temp]
 
     return monthlyDistanceTemp
 
