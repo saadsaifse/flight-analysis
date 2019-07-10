@@ -157,7 +157,7 @@ def calculateDistancePerDay(data):
                 date=datetime.strptime(dayData['timestamp'], '%Y-%m-%d %H:%M:%S')
 
                 date_later=datetime.strptime(bird_data[feature+1]['timestamp'], '%Y-%m-%d %H:%M:%S')
-                current_date=datetime.strptime(dayData['date'].toString("yyyy-MM-dd"),'%Y-%m-%d')
+                current_date=dayData['date']
 
                 #Create start of the day
                 date_start=current_date+timedelta(hours=17)
@@ -168,7 +168,7 @@ def calculateDistancePerDay(data):
                 distance=calculateDistancePoints(bird_data[feature]['long'],bird_data[feature]['lat'],bird_data[feature+1]['long'],bird_data[feature+1]['lat'])
 
                 if date>date_start and date<date_end and date_later>date_start and date_later<date_end:
-                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp'],'season':bird_data[feature]['season'],'month':bird_data[feature]['month']}
+                    birdInd[bird_id][i]={'date':current_date.strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['temp'],'season':bird_data[feature]['season'],'month':bird_data[feature]['month']}
                 else:
                     birdInd[bird_id][i]={'date':(current_date+timedelta(days=-1)).strftime('%Y-%m-%d'),'distance':distance,'temp':bird_data[feature]['avg_temp'],'season':bird_data[feature]['season'],'month':bird_data[feature]['month']}
 
@@ -229,3 +229,25 @@ def createEmptyList():
     emptyList=[0,0,0,0,0,0,0,0,0,0,0,0]
 
     return emptyList
+
+def distancePerTemp(distanceData):
+    temp=collections.defaultdict(list)
+
+    i=0
+
+    for i, values in distanceData.items():
+
+        if i+1 in list(distanceData.keys()) and distanceData[i]["temp"]==distanceData[i+1]["temp"]:
+            temp[values["temp"]].append(values["distance"])
+        else:
+            temp[values["temp"]].append(values["distance"])
+
+    total=[]
+    second=[]
+
+    for i, values in temp.items():
+        second.append(values)
+
+    total=[list(temp.keys()),second]
+
+    return total
