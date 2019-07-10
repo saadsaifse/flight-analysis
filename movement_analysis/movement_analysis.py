@@ -59,6 +59,9 @@ try:
 except:
     raise
 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
@@ -341,14 +344,32 @@ class AnimalMovementAnalysis:
                         # self.dlg3.label_2.setPixmap(pixmap)
                         self.dlg3.textEdit.setText(str(self.selected_birds))
                         self.dlg3.textEdit_2.setText(str(self.selected_seasons))
+                        
                         self.dlg3.show()
+                        # self.dlg3.showPlotButton.setEnabled(False)
 
-                        def changePloat(path):
+                        def changePlot(path, numbers, popup=False):
+                            plt.clf()
+                            self.currentPlot = path
                             current_dir = os.path.dirname(os.path.abspath(__file__))
                             uri = current_dir + path
+                            if (not os.path.isfile(uri)):
+                                print("doesn't exist yet")
+                                plt.plot(numbers)
+                                plt.ylabel('some numbers')
+                                plt.savefig(uri, bbox_inches='tight')
+                                
                             pixmap = QPixmap(uri)
                             self.dlg3.statsLabel.setPixmap(pixmap)
+                            self.dlg3.showPlotButton.setEnabled(True)
+                            if (popup):
+                                plt.plot(numbers)
+                                plt.ylabel('some numbers')
+                                plt.show()
 
-                        self.dlg3.distTempButton.clicked.connect(lambda: changePloat("/plot-diagram.png"))
-                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePloat("/Download.png"))
+
+                        self.dlg3.distTempButton.clicked.connect(lambda: changePlot("/distTemp.png", [1,2,3,4]))
+                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePlot("/monthlyStats.png", [4,3,2,1]))
+                        # if (self.dlg3.showPlotButton):
+                        self.dlg3.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, [4,3,2,1], True))
 
