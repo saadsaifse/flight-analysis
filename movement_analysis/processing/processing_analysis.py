@@ -194,7 +194,7 @@ def calculateSeasonFlight(date):
 # Name: calculateDistancePerDay(data)
 # Description: calculate the total distance
 # @args:
-#       date: dictionary data obvject with features filtered
+#       data: dictionary data object with features filtered
 # @return:
 #       Dictionary object id_bird, date, distance, temperature
 """
@@ -232,6 +232,15 @@ def calculateDistancePerDay(data):
 
     return birdInd
 
+"""
+# Name: processBird(data)
+# Description:
+# @args:
+#       data: dictionary data object with features filtered
+# @return:
+#       Dictionary object id_bird, date, distance, temperature
+"""
+
 def processBird(data):
     total_distance=0
     birdDayResults=collections.defaultdict(dict)
@@ -247,6 +256,38 @@ def processBird(data):
                 k+=1
 
     return birdDayResults
+
+"""
+# Name:
+# Description:
+# @args:
+#
+# @return:
+#
+"""
+
+def tempAndDist(distanceData):
+    temp=[]
+    dist=[]
+    merge=[]
+
+    for key, values in distanceData.items():
+        temp.append(values["temp"])
+        dist.append(values["distance"])
+
+    merge=[temp,dist]
+
+    return merge
+
+
+"""
+# Name:
+# Description:
+# @args:
+#
+# @return:
+#
+"""
 
 def monthlyDistanceTemp(distanceData):
     monthlyDistanceTemp=collections.defaultdict(list)
@@ -278,10 +319,15 @@ def monthlyDistanceTemp(distanceData):
 
     return monthlyDistanceTemp
 
-
-
+"""
+# Name:
+# Description:
+# @args:
+#
+# @return:
+#
+"""
 def distancePerTemp(distanceData):
-    def distancePerTemp(distanceData):
     temp=collections.defaultdict(list)
 
     i=0
@@ -293,25 +339,11 @@ def distancePerTemp(distanceData):
 
     total=[]
     second=[]
+    sorted_keys=sorted(temp.keys())
 
-    sorted=sorted(temp.keys())
-
-    for i,values in sorted :
+    for i,values in sorted_keys:
       second.append(values)
 
-    total=[list(sorted(temp.keys())),second]
-
+    total=[list(sorted_keys),second]
     return total
-
-def tempAndDist(distanceData):
-    temp=[]
-    dist=[]
-    merge=[]
-
-    for key, values in distanceData.items():
-        temp.append(values["temp"])
-        dist.append(values["distance"])
-
-    merge=[temp,dist]
-
-    return merge
+    
