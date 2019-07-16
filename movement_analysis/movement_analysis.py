@@ -34,11 +34,11 @@ from PyQt5.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
 from .resources import *
-# Import the code for the dialog
+# Import the code for the dialogs
 from .movement_analysis_dialog import (AnimalMovementAnalysisDialog,
                                        AnimalMovementAnalysisDialogFilter,
                                        AnimalMovementAnalysisDialogResults)
-# import os.path
+
 from qgis.core import (QgsProject, QgsColorRampShader,
                        Qgis, QgsVectorLayer, QgsRasterLayer,
                        QgsSingleBandPseudoColorRenderer,
@@ -46,26 +46,27 @@ from qgis.core import (QgsProject, QgsColorRampShader,
 
 from datetime import datetime as dt
 
-# from qgis.core import *
 import qgis.utils
 import os
+
+import matplotlib.pyplot as plt
+plt.clf()
+# from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+# from matplotlib.figure import Figure
 
 # import local processing files
 sys.path.insert(0, './preprocessing')
 sys.path.insert(0, './processing')
 sys.path.insert(0, '.postprocessing')
+
 try:
-    from .preprocessing import preprocessing_new as ppn
-    from .processing import processing_analysis as pa
+    from .preprocessing import preprocessing_new as preproces
+    from .processing import processing_analysis as proces
     from .postprocessing import avgDistancePerMonthPlot as month_plot
     from .postprocessing import avgDistancePerTempPlot as temp_plot
     from .postprocessing import scatterPlotWithFitting as scatter_plot
 except:
     raise
-
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
@@ -221,26 +222,27 @@ class AnimalMovementAnalysis:
         # Only create GUI ONCE in callback, so that it will only load when the
         # plugin is started
         self.calculos = {}
+
         if self.first_start:
             self.first_start = False
-            self.dlg1 = AnimalMovementAnalysisDialog()
-            self.dlg2 = AnimalMovementAnalysisDialogFilter()
-            self.dlg3 = AnimalMovementAnalysisDialogResults()
+            # corresponding dialogs
+            self.input_dlg = AnimalMovementAnalysisDialog()
+            self.filter_dlg = AnimalMovementAnalysisDialogFilter()
+            self.result_dlg = AnimalMovementAnalysisDialogResults()
 
-        # show the dialog
-        self.dlg1.show()
+        # show the first dialog
+        self.input_dlg.show()
         # Run the dialog event loop
-        upload_result = self.dlg1.exec_()
-        # self.dlg1.mQgsFileWidget1.clear()
+        upload_result = self.input_dlg.exec_()
+        # self.input_dlg.mQgsFileWidget1.clear()
         # See if OK was pressed
         if upload_result:
-            # get paths to the chosen files
-            birds_path = self.dlg1.mQgsFileWidget1.filePath()
+            # get path to the chosen file
+            birds_path = self.input_dlg.mQgsFileWidget1.filePath()
             # check if it's a Shapefile
             if not birds_path.endswith('.shp'):
                 self.iface.messageBar().pushMessage(
-                    "Error", "Please upload shapefile", level=Qgis.Critical)
-
+                    "Error", "Please upload a shapefile", level=Qgis.Critical)
             else:
                 start = dt.now()
                 # load the layer
@@ -254,75 +256,79 @@ class AnimalMovementAnalysis:
                         level=Qgis.Critical)
 
                 else:
-                    # cloning the layer without reference not to alter
-                    # the original file
+                    # cloning the layer without reference to definitely
+                    # not alter the original shapefile
                     birds_layer.selectAll()
                     cloned_layer = processing.run(
                         "native:saveselectedfeatures", {
                             'INPUT': birds_layer,
                             'OUTPUT': 'memory:'})['OUTPUT']
 
-                    # remove unnecessary attributes, join tables with the
-                    # temperature file
-                    birds_object = ppn.constructDataObject(cloned_layer)
+                    ### START PREPROCESSING ###
+
+                    # transform to objects for (much) faster computation times
+                    birds_object = preproces.constructDataObject(cloned_layer)
                     end1 = dt.now()
                     total_time = end1 - start
                     print("Constructed the whole object : ", total_time)
-                    all_points = ppn.preprocessing(birds_object)
+
+                    # remove unnecessary attributes, join tables with the
+                    # temperature file
+                    all_points = preproces.preprocessing(birds_object)
                     print("Preprocessed")
                     # # add all to the map
                     # QgsProject.instance().addMapLayer(cloned_layer)
 
-                    # find out whether all birds or just 1 have to be analysed
-                    # features = cloned_layer.getFeatures()
-                    # ind_idents = {feature["ind_ident"] for feature in all_points}
+                    # prepare to find out whether all birds or just 1 have to be analysed
+                    # find all unique bird ids in the dataset
                     list_idents = []
                     for point in all_points.values():
                         if (point["ind_ident"] not in list_idents):
                             list_idents.append(point["ind_ident"])
-                    # list_idents = list(ind_idents)
                     list_idents.insert(0, "All")
 
                     # show the next dialog
-                    self.dlg2.show()
-                    self.dlg2.comboBox.clear()
-                    self.dlg2.comboBox.addItems(list_idents)
-                    self.dlg2.comboBox.setCurrentIndex(0)
-                    self.dlg2.mComboBox.selectAllOptions()
-                    self.dlg2.button_box.setEnabled(False)
+                    self.filter_dlg.show()
+                    self.filter_dlg.comboBox.clear()
+                    self.filter_dlg.comboBox.addItems(list_idents)
+                    self.filter_dlg.comboBox.setCurrentIndex(0)
+                    self.filter_dlg.mComboBox.selectAllOptions()
+                    self.filter_dlg.button_box.setEnabled(False)
 
+                    # function that checks whether there are points to current
+                    # filtering parameters. The function must be here, and use
+                    # local variables, because .connect() doesn't allow for
+                    # return values
                     def calculatePoints():
-                        print("Something was chosen")
-                        self.selected_seasons = self.dlg2.mComboBox.checkedItems()
-                        selected_bird_index = self.dlg2.comboBox.currentIndex()
+                        print("Search parameters were chosen")
+                        self.selected_seasons = self.filter_dlg.mComboBox.checkedItems()
+                        selected_bird_index = self.filter_dlg.comboBox.currentIndex()
 
+                        # tracking time again
                         start2 = dt.now()
 
                         if (selected_bird_index == 0):
+                            # all were selected
                             self.selected_birds = list_idents[1:]
                         else:
                             self.selected_birds = [list_idents[selected_bird_index]]
-
-                        print(self.selected_seasons, self.selected_birds)
 
                         end2 = dt.now()
                         total_time = end2 - start2
                         print("Set up the filters: ", total_time)
 
-                        # construct the data_object required in the processing
-                        # all_points = pa.constructDataObject(cloned_layer)
+                        ### START FILTERING ###
 
                         # sort by bird if it's only 1 or just take all of them
                         if (len(self.selected_birds) == 1):
-                            filtered_by_bird = pa.filterDataByBird(
+                            filtered_by_bird = proces.filterDataByBird(
                                 all_points, self.selected_birds[0])
                         else:
                             filtered_by_bird = all_points
 
-                        # now filter by season
-                        print(len(self.selected_seasons))
+                        # now filter by season or take all if all seasons selected
                         if (len(self.selected_seasons) < 4):
-                            filtered_by_bird_and_season = pa.filterDataBySeason(
+                            filtered_by_bird_and_season = proces.filterDataBySeason(
                                 filtered_by_bird, self.selected_seasons)
                         else:
                             filtered_by_bird_and_season = filtered_by_bird
@@ -331,117 +337,143 @@ class AnimalMovementAnalysis:
                         total_time = end3 - end2
                         print("Filtered the points: ", total_time)
 
-                        # and now calculate distance per day
-                        self.calculos = pa.calculateDistancePerDay(
+                        # and now calculate distance flown per bird per day
+                        self.calculos = proces.calculateDistancePerDay(
                             filtered_by_bird_and_season)
 
                         end4 = dt.now()
                         total_time = end4 - end3
                         print("Distance per day done: ", total_time)
 
+                        # disable or enable proceeding according to 
+                        # whether some points were found
                         if (not self.calculos):
-                            self.dlg2.lineEdit.setText("No")
-                            self.dlg2.button_box.setEnabled(False)
+                            self.filter_dlg.lineEdit.setText("No")
+                            self.filter_dlg.button_box.setEnabled(False)
                         else:
-                            # points_amount = 0
-                            # for obj in self.calculos.values():
-                            #     points_amount += len(obj)
-                            self.dlg2.lineEdit.setText("Yes")
-                            self.dlg2.button_box.setEnabled(True)
+                            self.filter_dlg.lineEdit.setText("Yes")
+                            self.filter_dlg.button_box.setEnabled(True)
 
-                    self.dlg2.calculateButton.clicked.connect(
+                    # event on button press, to see if any data was found
+                    self.filter_dlg.calculateButton.clicked.connect(
                         lambda: calculatePoints())
 
-                    # Run the dialog event loop
-                    filtering_result = self.dlg2.exec_()
+                    # Run the dialog event loop for filtering
+                    filtering_result = self.filter_dlg.exec_()
 
                     if filtering_result:
-                        print("Yay")
+                        # more time tracking
                         end4 = dt.now()
-                        process_birds = pa.processBird(self.calculos)
 
+                        ### PROCESSING ###
+
+                        process_birds = proces.processBird(self.calculos)
                         end5 = dt.now()
                         total_time = end5 - end4
                         print("Processed birds ", total_time)
-                    
-                        # print(process_birds)
-                        by_season = pa.monthlyDistanceTemp(process_birds)
                         
+                        # create data for the monthly statistics
+                        dist_by_month = proces.monthlyDistanceTemp(process_birds)
                         end6 = dt.now()
                         total_time = end6 - end5
                         print("Did monthly distance temp: ", total_time)
 
-                        to_scatter = pa.tempAndDist(process_birds)
-
+                        # create data for the scatter plot
+                        dist_to_scatter = proces.tempAndDist(process_birds)
                         end7 = dt.now()
                         total_time = end7 - end6
                         print("Prepared scatterplot data: ", total_time)
 
-                        by_temp = pa.distancePerTemp(process_birds)
-
+                        # create data for the dist/temp bar charts
+                        dist_by_temp = proces.distancePerTemp(process_birds)
                         end8 = dt.now()
                         total_time = end8 - end7
                         print("Prepared data for dist per temp: ", total_time)
 
-                        self.dlg3.textEdit.setText('\n'.join(self.selected_birds))
-                        self.dlg3.textEdit_2.setText('\n'.join(self.selected_seasons))
-                        
-                        self.dlg3.show()
-                        # self.dlg3.showPlotButton.setEnabled(False)
+                        # set the filtering params text fields
+                        self.result_dlg.textEdit.setText('\n'.join(self.selected_birds))
+                        self.result_dlg.textEdit_2.setText('\n'.join(self.selected_seasons))
+                        self.result_dlg.show()
 
+                        # function to dynamically change plots
                         def changePlot(kind, popup=False):
-                            tempPlot = None 
-                            monthPlot = None
+                            plt.clf()
+                            plt.close()
+                            # tempPlot = None 
+                            # monthPlot = None
                             pixmap = None
-                            scatterPlot = None
+                            # scatterPlot = None
                             current_dir = os.path.dirname(os.path.abspath(__file__))
-                            if (kind == "seasons"):
+                            # same procedure for the temp/dist boxplots and the scatterplot
+                            if (kind == "temperatures"):
                                 if (popup):
-                                    monthPlot = month_plot.plot(by_season, True)
-                                    monthPlot.show()
-                                else:
-                                    self.currentPlot = "seasons"
-                                    uri = current_dir + "/seasonsPlot.png"
-                                    if (not os.path.isfile(uri)):
-                                        monthPlot = month_plot.plot(by_season, True)
-                                        monthPlot.savefig(uri, bbox_inches='tight')
-
-                                    pixmap = QPixmap(uri)
-                                    self.dlg3.statsLabel.setPixmap(pixmap)
-                                    self.dlg3.showPlotButton.setEnabled(True)
-                            elif (kind == "temperatures"):
-                                if (popup):
-                                    tempPlot = temp_plot.plot(by_temp, True)
-                                    tempPlot.show()
+                                    print("now get the temperatures plot")
+                                    temp_plot.plot(dist_by_temp, False)
+                                    print("got the plot now show it temperatures")
+                                    # tempPlot.show()
+                                    print("showed the plot temperatures")
                                 else:
                                     self.currentPlot = "temperatures"
                                     uri = current_dir + "/temperaturesPlot.png"
-                                    if (not os.path.isfile(uri)):
-                                        tempPlot = temp_plot.plot(by_temp, True)
-                                        tempPlot.savefig(uri, bbox_inches='tight')
+                                    if (os.path.isfile(uri)):
+                                        os.remove(uri)
+
+                                    tempPlot = temp_plot.plot(dist_by_temp, True)
+                                    tempPlot.savefig(uri, bbox_inches='tight')
                                     
                                     pixmap = QPixmap(uri)
-                                    self.dlg3.statsLabel.setPixmap(pixmap)
-                                    self.dlg3.showPlotButton.setEnabled(True)
-
-                            elif (kind == "scatter"):
+                                    self.result_dlg.statsLabel.setPixmap(pixmap)
+                                    self.result_dlg.showPlotButton.setEnabled(True)
+                            # if it's the monthly statistics
+                            elif (kind == "seasons"):
+                                # just show the popup
                                 if (popup):
-                                    scatterPlot = scatter_plot.scatterPlot(to_scatter, True)
-                                    scatterPlot.show()
+                                    print("now get the seasons plot")
+                                    month_plot.plot(dist_by_month, False)
+                                    print("got the plot now show it seasons")
+                                    # monthPlotPopup.show()
+                                    print("showed the plot seasons")
+                                # or embed it into the interface
+                                else:
+                                    self.currentPlot = "seasons"
+                                    uri = current_dir + "/seasonsPlot.png"
+                                    # remove file if it already exists to avoid overlap
+                                    if (os.path.isfile(uri)):
+                                        os.remove(uri)
+                                    
+                                    # create the plot and save it
+                                    monthPlot = month_plot.plot(dist_by_month, True)
+                                    monthPlot.savefig(uri, bbox_inches='tight')
+                                    # make a QPixmap out of it and load to interface
+                                    pixmap = QPixmap(uri)
+                                    self.result_dlg.statsLabel.setPixmap(pixmap)
+                                    # now the plot can also be shown full size
+                                    self.result_dlg.showPlotButton.setEnabled(True)
+
+                            else:
+                                #  (kind == "scatter"):
+                                if (popup):
+                                    print("now get the scatter plot")
+                                    scatter_plot.scatterPlot(dist_to_scatter, False)
+                                    print("got the plot now show it scatter")
+                                    # scatterPlot.show()
+                                    print("showed the plot scatter")
                                 else:
                                     self.currentPlot = "scatter"
                                     uri = current_dir + "/scatterPlot.png"
-                                    if (not os.path.isfile(uri)):
-                                        scatterPlot = scatter_plot.scatterPlot(to_scatter, True)
-                                        scatterPlot.savefig(uri, bbox_inches='tight')
+                                    if (os.path.isfile(uri)):
+                                        os.remove(uri)
+                                    
+                                    scatterPlot = scatter_plot.scatterPlot(dist_to_scatter, True)
+                                    scatterPlot.savefig(uri, bbox_inches='tight')
                                     
                                     pixmap = QPixmap(uri)
-                                    self.dlg3.statsLabel.setPixmap(pixmap)
-                                    self.dlg3.showPlotButton.setEnabled(True)
+                                    self.result_dlg.statsLabel.setPixmap(pixmap)
+                                    self.result_dlg.showPlotButton.setEnabled(True)
 
-                        self.dlg3.distTempButton.clicked.connect(lambda: changePlot("temperatures"))
-                        self.dlg3.monthlyStatsButton.clicked.connect(lambda: changePlot("seasons"))
-                        self.dlg3.scatterplotButton.clicked.connect(lambda: changePlot("scatter"))
-
-                        self.dlg3.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, True))
+                        # button events to display different plots
+                        self.result_dlg.distTempButton.clicked.connect(lambda: changePlot("temperatures"))
+                        self.result_dlg.monthlyStatsButton.clicked.connect(lambda: changePlot("seasons"))
+                        self.result_dlg.scatterplotButton.clicked.connect(lambda: changePlot("scatter"))
+                        self.result_dlg.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, True))
 
