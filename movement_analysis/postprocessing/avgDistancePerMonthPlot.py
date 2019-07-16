@@ -67,7 +67,9 @@ def plot(data, shouldReturn = False):
     ax3.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
     ax3.tick_params(labelsize=12, length=0)
     ax3.set_title('Autumns')
-    ax3.set_ylim(0,yLimit)    
+    ax3.set_ylim(0,yLimit)
+
+    fig.canvas.set_window_title('Monthly temperature vs distance plot')
    
     if shouldReturn:
         return plt

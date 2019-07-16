@@ -44,6 +44,7 @@ def scatterPlot(data, shouldReturn):
     axes.tick_params(labelsize=12, length=0)
     
     plt.title("Bird scatter plot")
+    fig.canvas.set_window_title('Temperature vs distance scatter plot')
     # plt.axis('equal')
     if shouldReturn:
         return plt

@@ -27,6 +27,7 @@ def plot(data, shouldReturn):
     ax.tick_params(labelsize=12, length=0)
 
     plt.title('Distances per temperature')
+    fig.canvas.set_window_title('Average distance per temperature plot')
 
     if shouldReturn:
         return plt
