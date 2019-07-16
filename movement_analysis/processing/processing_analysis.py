@@ -253,12 +253,11 @@ def createEmptyList():
     return emptyList
 
 def distancePerTemp(distanceData):
+    def distancePerTemp(distanceData):
     temp=collections.defaultdict(list)
 
     i=0
-
     for i, values in distanceData.items():
-
         if i+1 in list(distanceData.keys()) and distanceData[i]["temp"]==distanceData[i+1]["temp"]:
             temp[values["temp"]].append(values["distance"])
         else:
@@ -267,10 +266,12 @@ def distancePerTemp(distanceData):
     total=[]
     second=[]
 
-    for i, values in temp.items():
-        second.append(values)
+    sorted=sorted(temp.keys())
 
-    total=[list(temp.keys()),second]
+    for i,values in sorted :
+      second.append(values)
+
+    total=[list(sorted(temp.keys())),second]
 
     return total
 
