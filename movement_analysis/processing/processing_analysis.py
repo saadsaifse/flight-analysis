@@ -339,11 +339,12 @@ def distancePerTemp(distanceData):
 
     total=[]
     second=[]
-    sorted_keys=sorted(temp.keys())
 
-    for i,values in sorted_keys:
-      second.append(values)
+    listed=list(sorted(temp.keys()))
 
-    total=[list(sorted_keys),second]
+    for i in listed:
+      second.append(temp[i])
+
+    total=[listed,second]
+
     return total
-    
