@@ -115,7 +115,10 @@ def filterDataByDate(data, date_init=None, date_end=None):
 def filterDataBySeason(data,season=["Winter", "Spring", "Summer", "Autumn"]):
     data_filtered={}
 
-    data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["season"] in season}
+    if len(season)==4:
+        data_filtered=data
+    else:
+        data_filtered = {outer_k: data[outer_k] for outer_k in data if data[outer_k]["season"] in season}
 
     return data_filtered
 
