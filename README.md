@@ -1,11 +1,11 @@
 
-# flight-analysis
+#  <img src="movement_analysis/icon.png" alt="icon"> flight-analysis
 
-QGIS Plugin for visual analysis of correlation between air temperature and average travel distances, developed based on eagle owls data in the area of **North Rhine-Westphalia** in Germany. Any dataset can be used for analysis, as long as it contains necessary attributes, is in this study area, and contains points for years 2011-2017.
+QGIS Plugin for visual analysis of correlation between air temperature and average travel distances, developed based on eagle owls data in the area of **North Rhine-Westphalia** in Germany. The plugin uses specifications of your QGIS to translate some of the buttons. Otherwise, the default language of the plugin is English. Any data set can be used as long as it contains the required attributes, belongs to the same region as the study area, and has data from 2011-2017.
 
 # Requirements
 
-A default installation of QGIS3 is required, with following  libraries included:
+A default installation of QGIS3 is required, with following libraries included:
 
  - PyQt5
  - qgis.core, qgis.utils
@@ -36,7 +36,7 @@ For visual analysis of the data, three kinds of plots are provided:
 
 # Installation
 
-Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it. The plugin uses specifications of your QGIS to translate some of the buttons. Otherwise, the default language of the plugin is English. 
+Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it. 
 
 # Usage
   
