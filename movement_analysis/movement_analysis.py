@@ -68,6 +68,7 @@ try:
 except:
     raise
 
+
 class AnimalMovementAnalysis:
     """QGIS Plugin Implementation."""
 
@@ -221,8 +222,6 @@ class AnimalMovementAnalysis:
         # reference
         # Only create GUI ONCE in callback, so that it will only load when the
         # plugin is started
-        self.calculos = {}
-
         if self.first_start:
             self.first_start = False
             # corresponding dialogs
@@ -230,11 +229,14 @@ class AnimalMovementAnalysis:
             self.filter_dlg = AnimalMovementAnalysisDialogFilter()
             self.result_dlg = AnimalMovementAnalysisDialogResults()
 
+        # must belong to the instance and be passed across functions
+        self.calculos = {}
+
         # show the first dialog
         self.input_dlg.show()
         # Run the dialog event loop
         upload_result = self.input_dlg.exec_()
-        # self.input_dlg.mQgsFileWidget1.clear()
+
         # See if OK was pressed
         if upload_result:
             # get path to the chosen file
@@ -264,7 +266,7 @@ class AnimalMovementAnalysis:
                             'INPUT': birds_layer,
                             'OUTPUT': 'memory:'})['OUTPUT']
 
-                    ### START PREPROCESSING ###
+                    """START PREPROCESSING"""
 
                     # transform to objects for (much) faster computation times
                     birds_object = preproces.constructDataObject(cloned_layer)
@@ -276,7 +278,7 @@ class AnimalMovementAnalysis:
                     # temperature file
                     all_points = preproces.preprocessing(birds_object)
                     print("Preprocessed")
-                    # # add all to the map
+                    # # add all to the map ?
                     # QgsProject.instance().addMapLayer(cloned_layer)
 
                     # prepare to find out whether all birds or just 1 have to be analysed
@@ -287,7 +289,8 @@ class AnimalMovementAnalysis:
                             list_idents.append(point["ind_ident"])
                     list_idents.insert(0, "All")
 
-                    # show the next dialog
+                    # show the next dialog with bird ids in the comboBox
+                    # and seasons in the mComboBox (for multiple choices)
                     self.filter_dlg.show()
                     self.filter_dlg.comboBox.clear()
                     self.filter_dlg.comboBox.addItems(list_idents)
@@ -295,85 +298,28 @@ class AnimalMovementAnalysis:
                     self.filter_dlg.mComboBox.selectAllOptions()
                     self.filter_dlg.button_box.setEnabled(False)
 
-                    # function that checks whether there are points to current
-                    # filtering parameters. The function must be here, and use
-                    # local variables, because .connect() doesn't allow for
-                    # return values
-                    def calculatePoints():
-                        print("Search parameters were chosen")
-                        self.selected_seasons = self.filter_dlg.mComboBox.checkedItems()
-                        selected_bird_index = self.filter_dlg.comboBox.currentIndex()
-
-                        # tracking time again
-                        start2 = dt.now()
-
-                        if (selected_bird_index == 0):
-                            # all were selected
-                            self.selected_birds = list_idents[1:]
-                        else:
-                            self.selected_birds = [list_idents[selected_bird_index]]
-
-                        end2 = dt.now()
-                        total_time = end2 - start2
-                        print("Set up the filters: ", total_time)
-
-                        ### START FILTERING ###
-
-                        # sort by bird if it's only 1 or just take all of them
-                        if (len(self.selected_birds) == 1):
-                            filtered_by_bird = proces.filterDataByBird(
-                                all_points, self.selected_birds[0])
-                        else:
-                            filtered_by_bird = all_points
-
-                        # now filter by season or take all if all seasons selected
-                        if (len(self.selected_seasons) < 4):
-                            filtered_by_bird_and_season = proces.filterDataBySeason(
-                                filtered_by_bird, self.selected_seasons)
-                        else:
-                            filtered_by_bird_and_season = filtered_by_bird
-
-                        end3 = dt.now()
-                        total_time = end3 - end2
-                        print("Filtered the points: ", total_time)
-
-                        # and now calculate distance flown per bird per day
-                        self.calculos = proces.calculateDistancePerDay(
-                            filtered_by_bird_and_season)
-
-                        end4 = dt.now()
-                        total_time = end4 - end3
-                        print("Distance per day done: ", total_time)
-
-                        # disable or enable proceeding according to 
-                        # whether some points were found
-                        if (not self.calculos):
-                            self.filter_dlg.lineEdit.setText("No")
-                            self.filter_dlg.button_box.setEnabled(False)
-                        else:
-                            self.filter_dlg.lineEdit.setText("Yes")
-                            self.filter_dlg.button_box.setEnabled(True)
-
-                    # event on button press, to see if any data was found
+                    # listen to the event on button press, to see if any data was found
                     self.filter_dlg.calculateButton.clicked.connect(
-                        lambda: calculatePoints())
+                        lambda: self.calculatePoints(all_points, list_idents))
 
                     # Run the dialog event loop for filtering
                     filtering_result = self.filter_dlg.exec_()
 
+                    # exists only when data according to the filtering parameters exists
                     if filtering_result:
                         # more time tracking
                         end4 = dt.now()
 
-                        ### PROCESSING ###
+                        """ PROCESSING """
 
                         process_birds = proces.processBird(self.calculos)
                         end5 = dt.now()
                         total_time = end5 - end4
                         print("Processed birds ", total_time)
-                        
+
                         # create data for the monthly statistics
-                        dist_by_month = proces.monthlyDistanceTemp(process_birds)
+                        dist_by_month = proces.monthlyDistanceTemp(
+                            process_birds)
                         end6 = dt.now()
                         total_time = end6 - end5
                         print("Did monthly distance temp: ", total_time)
@@ -390,90 +336,164 @@ class AnimalMovementAnalysis:
                         total_time = end8 - end7
                         print("Prepared data for dist per temp: ", total_time)
 
-                        # set the filtering params text fields
-                        self.result_dlg.textEdit.setText('\n'.join(self.selected_birds))
-                        self.result_dlg.textEdit_2.setText('\n'.join(self.selected_seasons))
+                        # show the filtering params from the previous window
+                        self.result_dlg.textEdit.setText(
+                            '\n'.join(self.selected_birds))
+                        self.result_dlg.textEdit_2.setText(
+                            '\n'.join(self.selected_seasons))
                         self.result_dlg.show()
 
-                        # function to dynamically change plots
-                        def changePlot(kind, popup=False):
-                            plt.clf()
-                            plt.close()
-                            # tempPlot = None 
-                            # monthPlot = None
-                            pixmap = None
-                            # scatterPlot = None
-                            current_dir = os.path.dirname(os.path.abspath(__file__))
-                            # same procedure for the temp/dist boxplots and the scatterplot
-                            if (kind == "temperatures"):
-                                if (popup):
-                                    print("now get the temperatures plot")
-                                    temp_plot.plot(dist_by_temp, False)
-                                    print("got the plot now show it temperatures")
-                                    # tempPlot.show()
-                                    print("showed the plot temperatures")
-                                else:
-                                    self.currentPlot = "temperatures"
-                                    uri = current_dir + "/temperaturesPlot.png"
-                                    if (os.path.isfile(uri)):
-                                        os.remove(uri)
+                        # listening to button events to display different plots
+                        self.result_dlg.distTempButton.clicked.connect(
+                            lambda: self.changePlot("temperatures", dist_by_temp))
+                        self.result_dlg.monthlyStatsButton.clicked.connect(
+                            lambda: self.changePlot("seasons", dist_by_month))
+                        self.result_dlg.scatterplotButton.clicked.connect(
+                            lambda: self.changePlot("scatter", dist_to_scatter))
+                        self.result_dlg.showPlotButton.clicked.connect(
+                            lambda: self.changePlot(self.currentPlot, self.currentData, True))
 
-                                    tempPlot = temp_plot.plot(dist_by_temp, True)
-                                    tempPlot.savefig(uri, bbox_inches='tight')
-                                    
-                                    pixmap = QPixmap(uri)
-                                    self.result_dlg.statsLabel.setPixmap(pixmap)
-                                    self.result_dlg.showPlotButton.setEnabled(True)
-                            # if it's the monthly statistics
-                            elif (kind == "seasons"):
-                                # just show the popup
-                                if (popup):
-                                    print("now get the seasons plot")
-                                    month_plot.plot(dist_by_month, False)
-                                    print("got the plot now show it seasons")
-                                    # monthPlotPopup.show()
-                                    print("showed the plot seasons")
-                                # or embed it into the interface
-                                else:
-                                    self.currentPlot = "seasons"
-                                    uri = current_dir + "/seasonsPlot.png"
-                                    # remove file if it already exists to avoid overlap
-                                    if (os.path.isfile(uri)):
-                                        os.remove(uri)
-                                    
-                                    # create the plot and save it
-                                    monthPlot = month_plot.plot(dist_by_month, True)
-                                    monthPlot.savefig(uri, bbox_inches='tight')
-                                    # make a QPixmap out of it and load to interface
-                                    pixmap = QPixmap(uri)
-                                    self.result_dlg.statsLabel.setPixmap(pixmap)
-                                    # now the plot can also be shown full size
-                                    self.result_dlg.showPlotButton.setEnabled(True)
 
-                            else:
-                                #  (kind == "scatter"):
-                                if (popup):
-                                    print("now get the scatter plot")
-                                    scatter_plot.scatterPlot(dist_to_scatter, False)
-                                    print("got the plot now show it scatter")
-                                    # scatterPlot.show()
-                                    print("showed the plot scatter")
-                                else:
-                                    self.currentPlot = "scatter"
-                                    uri = current_dir + "/scatterPlot.png"
-                                    if (os.path.isfile(uri)):
-                                        os.remove(uri)
-                                    
-                                    scatterPlot = scatter_plot.scatterPlot(dist_to_scatter, True)
-                                    scatterPlot.savefig(uri, bbox_inches='tight')
-                                    
-                                    pixmap = QPixmap(uri)
-                                    self.result_dlg.statsLabel.setPixmap(pixmap)
-                                    self.result_dlg.showPlotButton.setEnabled(True)
 
-                        # button events to display different plots
-                        self.result_dlg.distTempButton.clicked.connect(lambda: changePlot("temperatures"))
-                        self.result_dlg.monthlyStatsButton.clicked.connect(lambda: changePlot("seasons"))
-                        self.result_dlg.scatterplotButton.clicked.connect(lambda: changePlot("scatter"))
-                        self.result_dlg.showPlotButton.clicked.connect(lambda: changePlot(self.currentPlot, True))
+    """
+    # Name: calculatePoints(self, all_points, list_idents)
+    # Description: function that checks whether there are points to current
+    #   filtering parameters. The function alters the self.calculos object,
+    #   because .connect() doesn't allow for return values
+    # @args:
+    #    all_points: the preprocessed points objects, that must be filtered
+    #    list_idents: full list of the unique bird ids. 
+    """
+    def calculatePoints(self, all_points, list_idents):
+        print("Search parameters were chosen")
+        self.selected_seasons = self.filter_dlg.mComboBox.checkedItems()
+        selected_bird_index = self.filter_dlg.comboBox.currentIndex()
 
+        # tracking time again
+        start = dt.now()
+
+        if (selected_bird_index == 0):
+            # all were selected
+            self.selected_birds = list_idents[1:]
+        else:
+            self.selected_birds = [
+                list_idents[selected_bird_index]]
+
+        end1 = dt.now()
+        total_time = end1 - start
+        print("Set up the filters: ", total_time)
+
+        """START FILTERING"""
+
+        # sort by bird if it's only 1 or just take all of them
+        if (len(self.selected_birds) == 1):
+            filtered_by_bird = proces.filterDataByBird(
+                all_points, self.selected_birds[0])
+        else:
+            filtered_by_bird = all_points
+
+        # now filter by season or take all if all seasons selected
+        if (len(self.selected_seasons) < 4):
+            filtered_by_bird_and_season = proces.filterDataBySeason(
+                filtered_by_bird, self.selected_seasons)
+        else:
+            filtered_by_bird_and_season = filtered_by_bird
+
+        end2 = dt.now()
+        total_time = end2 - end1
+        print("Filtered the points: ", total_time)
+
+        # and now calculate distance flown per bird per day
+        self.calculos = proces.calculateDistancePerDay(
+            filtered_by_bird_and_season)
+
+        end3 = dt.now()
+        total_time = end3 - end2
+        print("Distance per day done: ", total_time)
+
+        # disable or enable proceeding according to
+        # whether some points were found
+        if (not self.calculos):
+            self.filter_dlg.lineEdit.setText("No")
+            self.filter_dlg.button_box.setEnabled(False)
+        else:
+            self.filter_dlg.lineEdit.setText("Yes")
+            self.filter_dlg.button_box.setEnabled(True)
+
+
+    """
+    # Name: changePlot(self, type, data, popup=False):
+    # Description: calls for the plots on button click and
+    #   dynamically embeds them into the user interface
+    #   or shows them in a popup
+    # @args:
+    #       type: type of the plot that is being called,
+    #             as a String: "temperatures", "seasons",
+    #             "scatter"
+    #       data: processed dataset that serves as a input
+    #       popup: Boolean value to define if embedded or popup
+    """
+    def changePlot(self, type, data, popup=False):
+        # clear the plots just in case
+        plt.clf()
+        plt.close()
+        pixmap = None
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # if it's the temperature/distance boxplots
+        if (type == "temperatures"):
+            if (popup):
+                # just show the popup
+                temp_plot.plot(data, False)
+            else:
+                # or embed it into the interface
+                
+                # save values that have to be between functions
+                self.currentPlot = "temperatures"
+                self.currentData = data
+                uri = current_dir + "/temperaturesPlot.png"
+                # remove file if it already exists to avoid overlap
+                if (os.path.isfile(uri)):
+                    os.remove(uri)
+
+                # create the plot and save it
+                tempPlot = temp_plot.plot(data, True)
+                tempPlot.savefig(uri, bbox_inches='tight')
+                # make a QPixmap out of it and load to interface
+                pixmap = QPixmap(uri)
+                self.result_dlg.statsLabel.setPixmap(pixmap)
+                # enable the button that has to be shown full size
+                self.result_dlg.showPlotButton.setEnabled(True)
+
+        # same procedure for the monthly statistics
+        elif (type == "seasons"):
+            if (popup):
+                month_plot.plot(data, False)
+            else:
+                self.currentPlot = "seasons"
+                self.currentData = data
+                uri = current_dir + "/seasonsPlot.png"
+                if (os.path.isfile(uri)):
+                    os.remove(uri)
+
+                monthPlot = month_plot.plot(data, True)
+                monthPlot.savefig(uri, bbox_inches='tight')
+                pixmap = QPixmap(uri)
+                self.result_dlg.statsLabel.setPixmap(pixmap)
+                self.result_dlg.showPlotButton.setEnabled(True)
+
+        # and for the scatterplot
+        else:
+            if (popup):
+                scatter_plot.scatterPlot(data, False)
+            else:
+                self.currentPlot = "scatter"
+                self.currentData = data
+                uri = current_dir + "/scatterPlot.png"
+                if (os.path.isfile(uri)):
+                    os.remove(uri)
+
+                scatterPlot = scatter_plot.scatterPlot(data, True)
+                scatterPlot.savefig(uri, bbox_inches='tight')
+                pixmap = QPixmap(uri)
+                self.result_dlg.statsLabel.setPixmap(pixmap)
+                self.result_dlg.showPlotButton.setEnabled(True)
