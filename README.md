@@ -41,10 +41,10 @@ Download the movement-analysis folder to your QGIS plugins folder and use the QG
 # Usage
   
  - Browse to the Shapefile that has to be analysed. 
-![Input Interface](https://previews.dropbox.com/p/thumb/AAdc9D7sl_BcOUBZ_om_6EzQCBmflkGuYWf2cP51uqfHQ_V-w1wFxRGM9SA0L_IfLoPMKOtY2bdww6OqSbHfJX_VjwyaUgAQ58mzm9btw4ms__exvxFob8brY66PQefQzW1j0wrPjFPSUN8gHe6scBHPXZja01e2BChL80qhB3fW4zNVSCxMz-jv1l7mzWw4QPqXj0JMTKcrwTJKXdKWYU58qYqwD2aD2SVD8qqloDql-D53dNKHJGuW4ocNSloE_u93ObTwIp4hQ8NVojHrfudGOhCFpBEVcJ0p2i10s8AmExGhWmPkYhDCQ8X3AFmPZGUt-3fFLa47eAC30XuZBYyM/p.png?fv_content=true&size_mode=5)
+![Input Interface](https://images2.imgbox.com/01/fd/f6Or8szl_o.png)
   
  - Select the filtering parameters and click on "calculate" to see if there are any available points
-![Filtering Interface](https://previews.dropbox.com/p/thumb/AAewfWAbcY6pXQnb3kMsfAxTGlnOC9jKMGgeGKIxytHsHOksACFUFlJC9CzySeStaPX4hoSP9Iv7AEJVFWQwpqgNASmm-hnwltcL99RAtQ0gXAlFjfacRImSJzTpyqSRg8xC25yUUvPKiU22eK6iljOCZu_isKW5LzaqgSC6E49fpDXz6YwwvzwO_AY5HtcOz0LDtL9JwMeA_6RmCP-Mvffj1uA5TFyVPNlYVFuLTt7ATDYmx_d3VCbXUWuDq2q1rQukxrSSDhg24yV-y7psOJ1KObnU6vIcb_FKDYyduvlyX2CrusJLPwqUlKpKCiQeQ0StncWYypdsnFeZH5DqsZ9R/p.png?fv_content=true&size_mode=5)
+![Filtering Interface](https://images2.imgbox.com/2f/45/oOEYS4bW_o.png)
 
  - See the analysis results in three available formats by clicking on corresponding buttons to embed plots into the interface, or to see them in a popup. The popup window allows to rescale the plot, zoom in to the rectangle of interest, configure the plot parameters, and save it to the directory of choice.
-![Results Interface](https://previews.dropbox.com/p/thumb/AAcUBhFroGNZmeqdI4dIeY925MjRtHcbt9UmK-rZWMPqG4rRF3wHFK3yJNWSX4YoA-YEkccNPMrZsBlaCMqxb5hnmRAjrFvlKGP78JD6y2Vnz0Acif12lyAJDgNBccf82MUsFd0EGXF1eWObzq9zXE_vAnBc5olrbhODNMN2oV0LTBRxdt7vXzLoUUXWfAr5UMde8SmyFkLWRyfQmsGSquC0vFWwssMIJoQevEEc6pGboaDloTrqpwLUBYccYID2X6yy3zBJZHHG_WHcNY3oUnhaf_b6ZSzmg2LKKcoxCK9LpbeRm7-KUQE9lUjlGOFNF_cCj_AnAGDQz80QAL5TOoZY/p.png?fv_content=true&size_mode=5)
+![Results Interface](https://images2.imgbox.com/71/f9/3zyfvT8T_o.png)
