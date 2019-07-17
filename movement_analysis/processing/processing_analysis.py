@@ -152,33 +152,6 @@ def calculateDistancePoints(lon1,lat1,lon2,lat2):
     return c * r
 
 """
-# Name: calculateSeasonFlight(date)
-# Description: calculate the season for a given date according to the month
-# @args:
-#       date: date in format YYYY-MM-DD
-# @return
-        String season Winter, Spring, Summer, Autumn
-"""
-def calculateSeasonFlight(date):
-    month=date.month
-    seasons_month={
-        1:"Winter",
-        2:"Winter",
-        3:"Spring",
-        4:"Spring",
-        5:"Spring",
-        6:"Summer",
-        7:"Summer",
-        8:"Summer",
-        9:"Autumn",
-        10:"Autumn",
-        11:"Autumn",
-        12:"Winter",
-    }
-
-    return seasons_month.get(month, 0)
-
-"""
 # Name: calculateDistancePerDay(data)
 # Description: calculate the distance between points that a bird moved in a "bird day", that is from 17:00 start day to 5:00 next day
 # @args:
