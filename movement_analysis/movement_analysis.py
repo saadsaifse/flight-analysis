@@ -229,6 +229,7 @@ class AnimalMovementAnalysis:
             self.filter_dlg = AnimalMovementAnalysisDialogFilter()
             self.result_dlg = AnimalMovementAnalysisDialogResults()
 
+        # daily travelled distance per bird
         # must belong to the instance and be passed across functions
         self.calculos = {}
 
@@ -250,7 +251,7 @@ class AnimalMovementAnalysis:
                 # load the layer
                 birds_layer = QgsVectorLayer(birds_path, "birds layer", "ogr")
 
-                # check if it's a valid Shapefile
+                # check if it's valid
                 if not birds_layer.isValid():
                     self.iface.messageBar().pushMessage(
                         "Error", "Unfortunately the shapefile could not be \
@@ -266,7 +267,7 @@ class AnimalMovementAnalysis:
                             'INPUT': birds_layer,
                             'OUTPUT': 'memory:'})['OUTPUT']
 
-                    """START PREPROCESSING"""
+                    """ PREPROCESSING """
 
                     # transform to objects for (much) faster computation times
                     birds_object = proces.constructDataObject(cloned_layer)
@@ -277,9 +278,6 @@ class AnimalMovementAnalysis:
                     # remove unnecessary attributes, join tables with the
                     # temperature file
                     all_points = preproces.preprocessing(birds_object)
-
-                    # # add all to the map ?
-                    # QgsProject.instance().addMapLayer(cloned_layer)
 
                     # prepare to find out whether all birds or just 1 have to be analysed
                     # find all unique bird ids in the dataset
@@ -293,6 +291,7 @@ class AnimalMovementAnalysis:
                     # and seasons in the mComboBox (for multiple choices)
                     self.filter_dlg.show()
                     self.filter_dlg.comboBox.clear()
+                    self.filter_dlg.lineEdit.setText("")
                     self.filter_dlg.comboBox.addItems(list_idents)
                     self.filter_dlg.comboBox.setCurrentIndex(0)
                     self.filter_dlg.mComboBox.selectAllOptions()
@@ -381,7 +380,7 @@ class AnimalMovementAnalysis:
         total_time = end1 - start
         print("Set up the filters: ", total_time)
 
-        """START FILTERING"""
+        """ FILTERING """
 
         # sort by bird if it's only 1 or just take all of them
         if (len(self.selected_birds) == 1):
