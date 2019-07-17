@@ -15,7 +15,7 @@ A default installation of QGIS3 is required, with following  libraries included:
  - numpy
  - pylab
  - Matplotlib
- -  datetime
+ - datetime
 
 ### Below fields must exist in the points Shapefile
  1. ind_ident: *String*
@@ -36,7 +36,7 @@ For visual analysis of the data, three kinds of plots are provided:
 
 # Installation
 
-Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it. 
+Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it. The plugin uses specifications of your QGIS to translate some of the buttons. Otherwise, the default language of the plugin is English. 
 
 # Usage
   
