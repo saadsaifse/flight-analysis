@@ -155,9 +155,9 @@ def calculateDistancePoints(lon1,lat1,lon2,lat2):
 # Name: calculateDistancePerDay(data)
 # Description: calculate the distance between points that a bird moved in a "bird day", that is from 17:00 start day to 5:00 next day
 # @args:
-#       data: dictionary data object with birds and temperature merged
+       data: dictionary data object with birds and temperature merged
 # @return:
-#       dictionary object id_bird, date, distance, temperature, season, month
+       dictionary object id_bird, date, distance, temperature, season, month
 """
 def calculateDistancePerDay(data):
     grouped = collections.defaultdict(dict)
@@ -197,9 +197,9 @@ def calculateDistancePerDay(data):
 # Name: processBird(data)
 # Description: calculates total distance traveled per bird per day
 # @args:
-#       data: dictionary object id_bird, date, distance, temperature, season, month
+        data: dictionary object id_bird, date, distance, temperature, season, month
 # @return:
-#       Dictionary object id_bird, date, distance, temperature, season, month
+        Dictionary object id_bird, date, distance, temperature, season, month
 """
 
 def processBird(data):
