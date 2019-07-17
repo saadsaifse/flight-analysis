@@ -40,10 +40,11 @@ Download the movement-analysis folder to your QGIS plugins folder and use the QG
 
 # Usage
   
- - Browse to the Shapefile that has to be analysed. 
+ - Browse to the Shapefile that has to be analysed.
+ </br> 
 ![Input Interface](https://images2.imgbox.com/01/fd/f6Or8szl_o.png)
   
- - Select the filtering parameters and click on "calculate" to see if there are any available points
+ - Select the filtering parameters and click on "calculate" to see if there are any available points.
 ![Filtering Interface](https://images2.imgbox.com/2f/45/oOEYS4bW_o.png)
 
  - See the analysis results in three available formats by clicking on corresponding buttons to embed plots into the interface, or to see them in a popup. The popup window allows to rescale the plot, zoom in to the rectangle of interest, configure the plot parameters, and save it to the directory of choice.
