@@ -36,8 +36,8 @@ def scatterPlot(data, shouldReturn):
     plt.plot(x_plot, m * x_plot + b, '-')
 
     # set the axis labels
-    axes.set_xlabel(r'$temperature °C $', fontsize=14, labelpad=10)
-    axes.set_ylabel(r'$distance in kilometers$', fontsize=14, labelpad=10, rotation=90)
+    axes.set_xlabel(r'$temperature\ °C $', fontsize=14, labelpad=10)
+    axes.set_ylabel(r'$distance\ in\ kilometers$', fontsize=14, labelpad=10, rotation=90)
 
      # Customize the plot
     axes.grid(1, ls='--', color='k', alpha=0.5, lw=1)
