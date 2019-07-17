@@ -269,7 +269,7 @@ class AnimalMovementAnalysis:
                     """START PREPROCESSING"""
 
                     # transform to objects for (much) faster computation times
-                    birds_object = preproces.constructDataObject(cloned_layer)
+                    birds_object = proces.constructDataObject(cloned_layer)
                     end1 = dt.now()
                     total_time = end1 - start
                     print("Constructed the whole points object : ", total_time)
@@ -277,7 +277,7 @@ class AnimalMovementAnalysis:
                     # remove unnecessary attributes, join tables with the
                     # temperature file
                     all_points = preproces.preprocessing(birds_object)
-                    
+
                     # # add all to the map ?
                     # QgsProject.instance().addMapLayer(cloned_layer)
 

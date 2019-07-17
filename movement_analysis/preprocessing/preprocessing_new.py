@@ -8,27 +8,6 @@ import csv
 from datetime import datetime as dt
 
 
-# Name: constructDataObject(dataSample)
-# Description: Create data object to arrange fields for processing from active
-# shapefile
-# @args:
-# dataSample: layer
-# @return dictionary data
-def constructDataObject(dataSample):
-    data = {}
-
-    features = dataSample.getFeatures()
-
-    for feature in features:
-        attributes = feature.attributes()
-        data[feature.id()] = {}
-
-        for field, attr in zip(dataSample.fields(), attributes):
-            data[feature.id()][field.name()] = attr
-
-    return data
-
-
 # Name: calculateSeasonFlight(date)
 # Description: calculate the season for a given date according to the month
 # @args:
