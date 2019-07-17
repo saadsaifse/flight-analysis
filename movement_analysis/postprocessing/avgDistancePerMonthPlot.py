@@ -9,7 +9,6 @@ def plot(data, shouldReturn = False):
         data: Three dimensional list, index 0 contains lists of months, index 1 contains lists of avg. distances while index 2 contains list of avg. temperatures
         shouldReturn: Boolean value determining if the plot should return or show the plot. Default is plot
     """    
-    plt.clf()
     yLimit = max(data[1]) + 5
     winterData = [data[0][0:2], data[1][0:2], data[2][0:2]]
     winterData[0].insert(0, data[0][11])
@@ -30,46 +29,44 @@ def plot(data, shouldReturn = False):
     plt.style.use('ggplot')
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
     fig.set_size_inches(9,6)
-
+    fig.canvas.set_window_title('Monthly statistics of flight distances')
     #plot first graph
+    ax0.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
     ax0.bar(winterData[0], winterData[1], color='#3773FC', lw = 1)
     ax0.plot(winterData[1], color='black', alpha=0.3, linestyle='--')    
-    ax0.set_ylabel(r'$avg. distance in km$', fontsize=14, labelpad=10, rotation=90)
-    ax0.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
+    ax0.set_ylabel(r'$avg. distance\ (km)$', fontsize=14, labelpad=10, rotation=90)
     ax0.tick_params(labelsize=12, length=0)
-    ax0.set_title('Winters')
+    ax0.set_title('Average distances in winter months')
     ax0.set_ylim(0,yLimit)
 
     #plot second graph
+    ax1.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
     ax1.bar(springData[0], springData[1], color='#38D915', lw = 1)
     ax1.plot(springData[1], color='black', alpha=0.3, linestyle='--')       
-    ax1.set_ylabel(r'$avg. distance in km$', fontsize=14, labelpad=10, rotation=90)
-    ax1.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
+    ax1.set_ylabel(r'$avg. distance\ (km)$', fontsize=14, labelpad=10, rotation=90)
     ax1.tick_params(labelsize=12, length=0)
-    ax1.set_title('Springs')
+    ax1.set_title('Average distances in spring months')
     ax1.set_ylim(0,yLimit)
     
     #plot third graph
+    ax2.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
     ax2.bar(summerData[0], summerData[1], color='#FFE73C', lw = 1)
     ax2.plot(summerData[1], color='black', alpha=0.3, linestyle='--')
     ax2.set_xlabel(r'$month$', fontsize=14, labelpad=10)
-    ax2.set_ylabel(r'$avg. distance in km$', fontsize=14, labelpad=10, rotation=90)
-    ax2.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
+    ax2.set_ylabel(r'$avg. distance\ (km)$', fontsize=14, labelpad=10, rotation=90)
     ax2.tick_params(labelsize=12, length=0)
-    ax2.set_title('Summers')
+    ax2.set_title('Average distances in summer months')
     ax2.set_ylim(0,yLimit)
     
     #plot fourth graph
+    ax3.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
     ax3.bar(autumnData[0], autumnData[1], color='#F1731C', lw = 1)
     ax3.plot(autumnData[1], color='black', alpha=0.3, linestyle='--')    
     ax3.set_xlabel(r'$month$', fontsize=14, labelpad=10)
-    ax3.set_ylabel(r'$avg. distance in km$', fontsize=14, labelpad=10, rotation=90)
-    ax3.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
+    ax3.set_ylabel(r'$avg. distance\ (km)$', fontsize=14, labelpad=10, rotation=90)
     ax3.tick_params(labelsize=12, length=0)
-    ax3.set_title('Autumns')
-    ax3.set_ylim(0,yLimit)
-
-    fig.canvas.set_window_title('Monthly temperature vs distance plot')
+    ax3.set_title('Average distances in autumn months')
+    ax3.set_ylim(0,yLimit)    
    
     if shouldReturn:
         return plt

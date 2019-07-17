@@ -19,8 +19,8 @@ def plot(data, shouldReturn):
     ax = plt.gca()
     ax.boxplot(data[1], labels=data[0])
     # set the axis labels
-    ax.set_xlabel(r'$temperature °C$', fontsize=14, labelpad=10)
-    ax.set_ylabel(r'$distance in kilometers$', fontsize=14, labelpad=10, rotation=90)
+    ax.set_xlabel(r'$temperature\ °C$', fontsize=14, labelpad=10)
+    ax.set_ylabel(r'$distance\ in\ kilometers$', fontsize=14, labelpad=10, rotation=90)
 
     # Customize the plot
     ax.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
