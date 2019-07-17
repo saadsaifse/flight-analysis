@@ -272,12 +272,12 @@ class AnimalMovementAnalysis:
                     birds_object = preproces.constructDataObject(cloned_layer)
                     end1 = dt.now()
                     total_time = end1 - start
-                    print("Constructed the whole object : ", total_time)
+                    print("Constructed the whole points object : ", total_time)
 
                     # remove unnecessary attributes, join tables with the
                     # temperature file
                     all_points = preproces.preprocessing(birds_object)
-                    print("Preprocessed")
+                    
                     # # add all to the map ?
                     # QgsProject.instance().addMapLayer(cloned_layer)
 
@@ -308,32 +308,32 @@ class AnimalMovementAnalysis:
                     # exists only when data according to the filtering parameters exists
                     if filtering_result:
                         # more time tracking
-                        end4 = dt.now()
+                        start = dt.now()
 
                         """ PROCESSING """
 
                         process_birds = proces.processBird(self.calculos)
-                        end5 = dt.now()
-                        total_time = end5 - end4
+                        end1 = dt.now()
+                        total_time = end1 - start
                         print("Processed birds ", total_time)
 
                         # create data for the monthly statistics
                         dist_by_month = proces.monthlyDistanceTemp(
                             process_birds)
-                        end6 = dt.now()
-                        total_time = end6 - end5
+                        end2 = dt.now()
+                        total_time = end2 - end1
                         print("Did monthly distance temp: ", total_time)
 
                         # create data for the scatter plot
                         dist_to_scatter = proces.tempAndDist(process_birds)
-                        end7 = dt.now()
-                        total_time = end7 - end6
+                        end3 = dt.now()
+                        total_time = end3 - end2
                         print("Prepared scatterplot data: ", total_time)
 
                         # create data for the dist/temp bar charts
                         dist_by_temp = proces.distancePerTemp(process_birds)
-                        end8 = dt.now()
-                        total_time = end8 - end7
+                        end4 = dt.now()
+                        total_time = end4 - end3
                         print("Prepared data for dist per temp: ", total_time)
 
                         # show the filtering params from the previous window
@@ -352,8 +352,6 @@ class AnimalMovementAnalysis:
                             lambda: self.changePlot("scatter", dist_to_scatter))
                         self.result_dlg.showPlotButton.clicked.connect(
                             lambda: self.changePlot(self.currentPlot, self.currentData, True))
-
-
 
     """
     # Name: calculatePoints(self, all_points, list_idents)
@@ -420,7 +418,6 @@ class AnimalMovementAnalysis:
             self.filter_dlg.lineEdit.setText("Yes")
             self.filter_dlg.button_box.setEnabled(True)
 
-
     """
     # Name: changePlot(self, type, data, popup=False):
     # Description: calls for the plots on button click and
@@ -446,7 +443,7 @@ class AnimalMovementAnalysis:
                 temp_plot.plot(data, False)
             else:
                 # or embed it into the interface
-                
+
                 # save values that have to be between functions
                 self.currentPlot = "temperatures"
                 self.currentData = data
