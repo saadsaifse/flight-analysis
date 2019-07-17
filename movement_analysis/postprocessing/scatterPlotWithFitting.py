@@ -5,30 +5,23 @@ import numpy as np
 
 from matplotlib.lines import Line2D
 
+def scatterPlot(data, shouldReturn = False):
+    """Takes formatted data and plots a scatterplot
 
-def getColorsForTemperaturesRange(temperatures):
-    colors = []
-    for t in temperatures:
-        if (t in range(-99, 15)):
-            colors.append('white')
-        elif (t in range(15, 25)):
-            colors.append('green')
-        elif (t in range(25, 40)):
-            colors.append('yellow')
-        else:
-            colors.append('black')
-    return colors
+    Parameters:
+        data: Two dimensional list, index 0 contains lists of temperatures while index 1 contains list of distances
+        shouldReturn: Boolean value determining if the plot should return or show the plot. Default is plot
+    
+    Returns:
+        If shouldReturn parameter is true, then returns the Matplotlib's plt object
+    """
 
-def scatterPlot(data, shouldReturn):
     plt.clf()
-    # Showing multiple boxplots on the same window
     plt.style.use('ggplot')
 
     fig = plt.figure(1)
     fig.set_size_inches(9, 6)
-    
-    #colors = getColorsForTemperaturesRange(temperatures)
-    
+      
     plt.scatter(data[0], data[1])
     axes = plt.gca()
     m, b = np.polyfit(data[0], data[1], 1)

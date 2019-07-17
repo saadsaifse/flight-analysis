@@ -25,16 +25,15 @@ from math import radians, cos, sin, asin, sqrt
 #############################
 
 # Name: constructDataObject(dataSample)
-# Description V1: Create data object to arrange fields for processing from active shapefile
 # Description V2: Create data object to arrange fields for processing from function argument object
 # @args:
-#       dataSample: layer
-# @return dictionary data
+#       dataSample: layer with origin in the user interface
+# @return
+        dictionary data object all fields
 """
 def constructDataObject(dataSample):
     data={}
-    # NOTE: using an active layer as data source
-    # dataSample = qgis.utils.iface.activeLayer();
+
     features = dataSample.getFeatures()
 
     for feature in features:
@@ -43,20 +42,13 @@ def constructDataObject(dataSample):
 
         for field, attr in zip(dataSample.fields(), attributes):
             data[feature.id()][field.name()]=attr
-
-            # NOTE: using an active layer as data source
-            # if field.name()=="date":
-            #     data[feature.id()]["season"]=calculateSeasonFlight(attr)
-
     return data
 
 """
-# Name: constructDataObject(dataSample)
-# Description V1: Create data object to arrange fields for processing from active shapefile
-# Description V2: Create data object to arrange fields for processing from function argument object
-# @args:
-#       dataSample: layer
-# @return dictionary data
+# Name: createMonthList()
+# Description: Create list object with month strings fro plotting
+# @args: None
+# @return: list
 """
 def createMonthList():
     monthList=[]
@@ -64,6 +56,12 @@ def createMonthList():
 
     return monthList
 
+"""
+# Name: createEmpyList()
+# Description: Create list object with empty values of 12 positions
+# @args: None
+# @return: list
+"""
 def createEmptyList():
     emptyList=[0,0,0,0,0,0,0,0,0,0,0,0]
 
@@ -76,7 +74,8 @@ def createEmptyList():
 
 # Name: filterDataByBird()
 # Description: Create data object subset by one bird selected by user
-# @return dictionary data filtered per bird selected
+# @return
+        dictionary data filtered per bird selected
 """
 def filterDataByBird(data,birds_filter=None):
     data_filtered={}
@@ -91,7 +90,8 @@ def filterDataByBird(data,birds_filter=None):
 """
 # Name: filterDataByDate()
 # Description: Create data object subset by user filters date range init and end
-# @return dictionary data filtered between two given dates
+# @return
+        dictionary data filtered between two given dates
 """
 def filterDataByDate(data, date_init=None, date_end=None):
     data_filtered={}
@@ -109,7 +109,8 @@ def filterDataByDate(data, date_init=None, date_end=None):
 """
 # Name: filterDataBySeason()
 # Description: Create data object subset by user filters season list
-# @return dictionary data filtered between given season(s)
+# @return
+        dictionary data filtered between given season(s)
 """
 def filterDataBySeason(data,season=["Winter", "Spring", "Summer", "Autumn"]):
     data_filtered={}
@@ -119,38 +120,24 @@ def filterDataBySeason(data,season=["Winter", "Spring", "Summer", "Autumn"]):
     return data_filtered
 
 """
-##################################################
-# Calculos of attributes value functions section #
-##################################################
+#######################################################
+# Functions for Calculus of attributes values section #
+#######################################################
 
-# Name: calculateDistancePoints(xa,ya,xb,yb)
-# Description: Measure linear distance between two points in WGS84 Ellipsoid
-# @args:
-#       xa: longitute pointA
-#       ya: latitude pointA
-#       xb: longitute pointB
-#       yb: latitude pointB
-# @return float distance in meters
+# Name: calculateDistancePoints(lon1,lat1,lon2,lat2)
 
-# Version 1.0 : using QGIS built in functionalities
-# Deprecated: calling built in function from QGIS impacts performance
-# def calculateDistancePoints(xa,ya,xb,yb):
-#     distance=0
-#     distanceF = QgsDistanceArea()
-#     distanceF.setEllipsoid('WGS84')
-#     point1=QgsPointXY(xa, ya)
-#     point2=QgsPointXY(xb,yb)
-#     distance=distanceF.measureLine(point1, point2)
-#     return distance
+ Version 1.0 : using QGIS built in functionalities
+ Deprecated: calling built in function from QGIS impacts performance
 
 # Version 2.0 : implementing calculus
 # Description: Calculate the great circle distance between two points on the earth (specified in decimal degrees)
 # @args:
-#       lon1: longitute pointA
-#       lat1: latitude pointA
-#       lon2: longitute pointB
-#       lat2: latitude pointB
-# @return float distance in kilometers
+       lon1: longitute pointA
+       lat1: latitude pointA
+       lon2: longitute pointB
+       lat2: latitude pointB
+# @return
+        float distance in kilometers
 """
 def calculateDistancePoints(lon1,lat1,lon2,lat2):
     # convert decimal degrees to radians
@@ -165,38 +152,12 @@ def calculateDistancePoints(lon1,lat1,lon2,lat2):
     return c * r
 
 """
-# Name: calculateSeasonFlight(date)
-# Description: calculate the season for a given date according to the month
-# @args:
-#       date: date in format YYYY-MM-DD
-# @return String season Winter, Spring, Summer, Autumn
-"""
-def calculateSeasonFlight(date):
-    month=date.month
-    seasons_month={
-        1:"Winter",
-        2:"Winter",
-        3:"Spring",
-        4:"Spring",
-        5:"Spring",
-        6:"Summer",
-        7:"Summer",
-        8:"Summer",
-        9:"Autumn",
-        10:"Autumn",
-        11:"Autumn",
-        12:"Winter",
-    }
-
-    return seasons_month.get(month, 0)
-
-"""
 # Name: calculateDistancePerDay(data)
-# Description: calculate the total distance
+# Description: calculate the distance between points that a bird moved in a "bird day", that is from 17:00 start day to 5:00 next day
 # @args:
-#       data: dictionary data object with features filtered
+#       data: dictionary data object with birds and temperature merged
 # @return:
-#       Dictionary object id_bird, date, distance, temperature
+#       dictionary object id_bird, date, distance, temperature, season, month
 """
 def calculateDistancePerDay(data):
     grouped = collections.defaultdict(dict)
@@ -234,11 +195,11 @@ def calculateDistancePerDay(data):
 
 """
 # Name: processBird(data)
-# Description:
+# Description: calculates total distance traveled per bird per day
 # @args:
-#       data: dictionary data object with features filtered
+#       data: dictionary object id_bird, date, distance, temperature, season, month
 # @return:
-#       Dictionary object id_bird, date, distance, temperature
+#       Dictionary object id_bird, date, distance, temperature, season, month
 """
 
 def processBird(data):
@@ -258,12 +219,17 @@ def processBird(data):
     return birdDayResults
 
 """
-# Name:
-# Description:
+#######################################################
+# Functions for Calculus of attributes values section #
+#######################################################
+
+
+# Name:tempAndDist(distanceData)
+# Description: returns object prepared for plotting
 # @args:
-#
+         Dictionary object id_bird, date, distance, temperature, season, month
 # @return:
-#
+        List object with distances (list) and the corresponding temperature (list)
 """
 
 def tempAndDist(distanceData):
@@ -279,16 +245,14 @@ def tempAndDist(distanceData):
 
     return merge
 
-
 """
-# Name:
-# Description:
+# Name: monthlyDistanceTemp(distanceData)
+# Description: returns object prepared for plotting. Calculate avg_temperature and avg_distance per month
 # @args:
-#
+         Dictionary object id_bird, date, distance, temperature, season, month
 # @return:
-#
+        List object with months list, corresponding avg_distance list per month and avg_temperature list per month
 """
-
 def monthlyDistanceTemp(distanceData):
     monthlyDistanceTemp=collections.defaultdict(list)
     temp=createEmptyList()
@@ -320,12 +284,12 @@ def monthlyDistanceTemp(distanceData):
     return monthlyDistanceTemp
 
 """
-# Name:
-# Description:
+# Name: distancePerTemp(distanceData)
+# Description: returns object prepared for plotting.
 # @args:
-#
+         Dictionary object id_bird, date, distance, temperature, season, month
 # @return:
-#
+        List object with unique temperature values (ascending values list) and the corresponding distances traveled on that temperature (list)
 """
 def distancePerTemp(distanceData):
     temp=collections.defaultdict(list)
