@@ -8,6 +8,9 @@ def plot(data, shouldReturn = False):
     Parameters:
         data: Three dimensional list, index 0 contains lists of months, index 1 contains lists of avg. distances while index 2 contains list of avg. temperatures
         shouldReturn: Boolean value determining if the plot should return or show the plot. Default is plot
+    
+    Returns:
+        If shouldReturn parameter is true, then returns the Matplotlib's plt object
     """    
     yLimit = max(data[1]) + 5
     winterData = [data[0][0:2], data[1][0:2], data[2][0:2]]

@@ -4,12 +4,15 @@ import matplotlib.pylab as plt
 # from matplotlib.pyplot import figure
 
 
-def plot(data, shouldReturn):
+def plot(data, shouldReturn = False):
     """Takes formatted data and plots a boxplot
 
     Parameters:
         data: Two dimensional list, index 0 contains lists of temperatures, index 1 contains list of lists of avg. distances
         shouldReturn: Boolean value determining if the plot should return or show the plot. Default is plot
+    
+    Returns:
+        If shouldReturn parameter is true, then returns the Matplotlib's plt object
     """    
     plt.clf()
     plt.style.use('ggplot')
