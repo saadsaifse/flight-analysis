@@ -341,6 +341,7 @@ class AnimalMovementAnalysis:
                         self.result_dlg.textEdit_2.setText(
                             '\n'.join(self.selected_seasons))
                         self.result_dlg.show()
+                        self.result_dlg.statsLabel.clear()
 
                         # listening to button events to display different plots
                         self.result_dlg.distTempButton.clicked.connect(
