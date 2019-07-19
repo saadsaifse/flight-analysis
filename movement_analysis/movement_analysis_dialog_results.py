@@ -80,6 +80,6 @@ class Ui_AnimalMovementAnalysisDialogBase(object):
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.label_5.setText(_translate("AnimalMovementAnalysisDialogBase", "Chosen birds"))
-        self.distTempButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Dislpay distance/temperature boxplots"))
+        self.distTempButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Display distance/temperature boxplots"))
         self.monthlyStatsButton.setText(_translate("AnimalMovementAnalysisDialogBase", "Display monthly bar charts "))
 
