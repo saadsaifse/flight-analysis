@@ -55,4 +55,4 @@ Download the movement-analysis folder to your QGIS plugins folder and use the QG
 
  - See the analysis results in three available formats by clicking on corresponding buttons to embed plots into the interface, or to see them in a popup. The popup window allows to rescale the plot, zoom in to the rectangle of interest, configure the plot parameters, and save it to the directory of choice.  
  
-![Results Interface](https://images2.imgbox.com/71/f9/3zyfvT8T_o.png)
+![Results Interface](https://images2.imgbox.com/42/8f/rD8zmvLQ_o.png)
