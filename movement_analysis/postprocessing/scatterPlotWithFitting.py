@@ -36,7 +36,7 @@ def scatterPlot(data, shouldReturn = False):
     axes.grid(1, ls='--', color='k', alpha=0.5, lw=1)
     axes.tick_params(labelsize=12, length=0)
     
-    plt.title("Bird scatter plot")
+    plt.title("Distances travelled vs temperature")
     fig.canvas.set_window_title('Temperature vs distance scatter plot')
     # plt.axis('equal')
     if shouldReturn:
