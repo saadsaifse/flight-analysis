@@ -32,6 +32,7 @@ def plot(data, shouldReturn = False):
     plt.style.use('ggplot')
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
     fig.set_size_inches(9,6)
+    fig.canvas.set_window_title('Monthly statistics of flight distances')
 
     #plot first graph
     ax0.grid(1, ls='--', color='#777777', alpha=0.5, lw=1)
