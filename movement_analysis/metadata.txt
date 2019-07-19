@@ -16,8 +16,8 @@ email=a_form03@uni-muenster.de
 
 about=This plugin finds correlation between air temperatures throughout a year and activity patterns of animals chosen by the user in the area of North Rhine-Westphalia
 
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/saadsaifse/flight-analysis/issues
+repository=https://github.com/saadsaifse/flight-analysis
 # End of mandatory metadata
 
 # Recommended items:
@@ -28,7 +28,7 @@ repository=http://repo
 # Tags are comma separated with spaces allowed
 tags=python
 
-homepage=http://homepage
+homepage=https://github.com/saadsaifse/flight-analysis
 category=Plugins
 icon=icon.png
 # experimental flag
