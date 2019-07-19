@@ -1,28 +1,53 @@
-# flight-analysis
-Repository for study project on eagle-owls flight time analysis against air temperatures using Python
 
-Below fields should be there in the shape file
+#  <img src="movement_analysis/icon.png" alt="icon"> flight-analysis
 
-1. birdId
-2. date
-3. time
-4. long
-5. lat
-6. temperature
-7. band
+QGIS Plugin for visual analysis of correlation between air temperature and average travel distances, developed based on eagle owls data in the area of **North Rhine-Westphalia** in Germany. The plugin uses specifications of your QGIS to translate some of the buttons. Otherwise, the default language of the plugin is English. Any data set can be used as long as it contains the required attributes, belongs to the same region as the study area, and has data from 2011-2017.
 
-# Installation
+## Requirements
 
-Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it.
+A default installation of QGIS3 is required, with following libraries included:
 
-# Decided Functions
+ - PyQt5
+ - qgis.core, qgis.utils
+ - os
+ - sys
+ - processing, collections, math
+ - numpy
+ - pylab
+ - Matplotlib
+ - datetime
 
-> calculateCummulativeSpeedPerDay(data)
+### Below fields must exist in the points Shapefile
+ 1. ind_ident: *String*
+ 2. timestamp: *String*
+ 3. lat: *Float*
+ 4. long: *Float*
 
-> calculateCummulativeTemperaturePerDay(data)
+*The temperatures dataset necessary for the analysis is provided and limited to the study area.* 
+ 
+## Available Features
+For visual analysis of the data, three kinds of plots are provided:
 
-> calculateAverageBirdSpeedPerDay(birdId, data)
+- Bar plot of average bird distances per seasonal months
+    
+- Box plots of average bird distances against temperatures
+    
+- Scatter plot of bird distances against temperatures with polynomial fitting
 
-> calculateAverageBirdTemperaturePerDay(birdId data)
+## Installation
 
+Download the movement-analysis folder to your QGIS plugins folder and use the QGIS Plugins menu to install it. 
 
+## Usage
+  
+ - Browse to the Shapefile that has to be analysed.  
+ 
+![Input Interface](https://images2.imgbox.com/01/fd/f6Or8szl_o.png)
+  
+ - Select the filtering parameters and click on "calculate" to see if there are any available points.  
+ 
+![Filtering Interface](https://images2.imgbox.com/2f/45/oOEYS4bW_o.png)
+
+ - See the analysis results in three available formats by clicking on corresponding buttons to embed plots into the interface, or to see them in a popup. The popup window allows to rescale the plot, zoom in to the rectangle of interest, configure the plot parameters, and save it to the directory of choice.  
+ 
+![Results Interface](https://images2.imgbox.com/71/f9/3zyfvT8T_o.png)
